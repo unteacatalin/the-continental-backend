@@ -61,11 +61,12 @@ exports.logout = async function () {
 };
 
 exports.getCurrentUser = async function (next) {
-  const { data: { session } = {} } = await supabase.auth.getSession();
+  // const { data: { session } = {} } = await supabase.auth.getSession();
+  const { sessionData } = await supabase.auth.getSession();
 
-  console.log({ session: data });
+  console.log({ session: sessionData });
 
-  if (!session)
+  if (!data.session)
     return next(
       new AppError(
         'No active session found! Please log in to get access.',
@@ -73,16 +74,17 @@ exports.getCurrentUser = async function (next) {
       ),
     );
 
-  const { data: { user } = {}, error } = await supabase.auth.getUser();
+  // const { data: { user } = {}, error } = await supabase.auth.getUser();
+  const { userData, error } = await supabase.auth.getUser();
 
-  console.log({user: data});
+  console.log({user: userData});
 
   if (error)
     return next(
       new AppError('You are not logged in! Please log in to get access.', 401),
     );
 
-  return user;
+  return userData.user;
 };
 
 exports.updateUser = async function ({ password, fullName, avatar, next }) {
