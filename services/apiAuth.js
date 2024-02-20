@@ -63,6 +63,8 @@ exports.logout = async function () {
 exports.getCurrentUser = async function (next) {
   const { data: { session } = {} } = await supabase.auth.getSession();
 
+  console.log({ session: data });
+
   if (!session)
     return next(
       new AppError(
@@ -72,6 +74,8 @@ exports.getCurrentUser = async function (next) {
     );
 
   const { data: { user } = {}, error } = await supabase.auth.getUser();
+
+  console.log({user: data});
 
   if (error)
     return next(
