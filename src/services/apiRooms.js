@@ -1,7 +1,9 @@
 import supabase, { supabaseUrl } from './supabase';
 
-export async function getRooms() {
+export async function getRooms(req) {
   let { data: rooms, error } = await supabase.from('rooms').select('*');
+
+  console.log({rooms});
 
   return {rooms, error};
 }
