@@ -2,18 +2,7 @@ import supabase, { supabaseUrl } from './supabase';
 import axios from 'axios';
 
 export async function getRooms() {
-  // let { data: rooms, error } = await supabase.from('rooms').select('*');
-
-  const { data: rooms, error } = await axios.get(
-    'https://untea-the-continental-backend-b7b62ca8f70a.herokuapp.com/api/v1/rooms',
-    {
-      withCredentials: true,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      // credentials: 'same-origin',
-    }
-  );
+  let { data: rooms, error } = await supabase.from('rooms').select('*');
 
   // const { data: rooms, error } = await result.json();
 
