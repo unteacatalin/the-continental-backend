@@ -62,9 +62,6 @@ exports.logout = async function () {
 
 exports.getCurrentUser = async function (next) {
   const { data: { session } = {} } = await supabase.auth.getSession();
-  // const { sessionData } = await supabase.auth.getSession();
-
-  console.log({ session });
 
   if (!session)
     return next(
@@ -75,9 +72,6 @@ exports.getCurrentUser = async function (next) {
     );
 
   const { data: { user } = {}, error } = await supabase.auth.getUser();
-  // const { userData, error } = await supabase.auth.getUser();
-
-  console.log({user});
 
   if (error)
     return next(
