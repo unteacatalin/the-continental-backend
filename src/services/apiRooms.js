@@ -6,8 +6,6 @@ export async function getRooms() {
 
   // const { data: rooms, error } = await result.json();
 
-  console.log({ rooms });
-
   // const data = await fetch(
   //   'https://untea-the-continental-backend-b7b62ca8f70a.herokuapp.com/api/v1/rooms',
   //   {
@@ -19,13 +17,13 @@ export async function getRooms() {
   // const result = await data.json();
 
   // if (result.status !== 'success') {
-  if (error) {
-    // console.error(result.message);
-    console.error(error);
-    throw new Error('Rooms data could not be loaded');
-  }
+  // if (error) {
+  //   // console.error(result.message);
+  //   console.error(error);
+  //   throw new Error('Rooms data could not be loaded');
+  // }
   // return result.rooms;
-  return rooms;
+  return {rooms, error};
 }
 
 export async function deleteRoom(id) {
