@@ -13,20 +13,35 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
   //   filter = { tour: req.params.tourid };
   // }
 
+  if (req.error) {
+    // SEND RESPONSE
+    res.status(401).json({
+      status: 'error',
+      data: { },
+      error: req.error,
+    });  
+  }
+
   // EXECUTE QUERY
   const { rooms, error } = await getRooms(req);
 
   if (error) {
     console.error(error);
     // return next(new AppError('Rooms data could not be loaded', 400));
+      // SEND RESPONSE
+    res.status(400).json({
+      status: 'error',
+      data: { },
+      error,
+    });  
   }
 
   // SEND RESPONSE
   res.status(200).json({
-    status: error || req.error ? 'error' : 'success',
+    status: 'success',
     results: rooms?.length,
     data: { rooms },
-    error: req.error ? req.error : error,
+    error: '',
   });
 });
 

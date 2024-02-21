@@ -113,6 +113,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.cookies.jwt;
   }
 
+  req.error = '';
+
   if (!token || token === 'null') {
     console.error('You are not logged in! Please log in to get access.');
     req.error = 'You are not logged in! Please log in to get access.';
