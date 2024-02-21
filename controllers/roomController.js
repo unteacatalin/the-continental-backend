@@ -14,7 +14,7 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
   // }
 
   // EXECUTE QUERY
-  const { data: rooms, error } = await getRooms(req);
+  const { rooms, error } = await getRooms(req);
 
   if (error) {
     console.error(error);
