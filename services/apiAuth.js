@@ -66,7 +66,7 @@ exports.getCurrentUser = async function (next) {
 
   console.log({ session: sessionData });
 
-  if (!data.session)
+  if (!sessionData.session)
     return next(
       new AppError(
         'No active session found! Please log in to get access.',
