@@ -114,9 +114,11 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token || token === 'null') {
-    return next(
-      new AppError('You are not logged in! Please log in to get access.', 401),
-    );
+    console.error('You are not logged in! Please log in to get access.');
+    req.error = 'You are not logged in! Please log in to get access.';
+    // return next(
+    //   new AppError('You are not logged in! Please log in to get access.', 401),
+    // );
   }
 
   // 2) Verification token
@@ -127,7 +129,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   console.log({ email1: decode.email, email2: currentUser.email });
 
   if (decode.email !== currentUser.email) {
-    return next(new AppError('Token belongs to different user'));
+    console.log('Token belongs to different user');
+    req.error = 'Token belongs to different user';
+    // return next(new AppError('Token belongs to different user'));
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE

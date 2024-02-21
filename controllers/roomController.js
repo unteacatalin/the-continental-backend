@@ -23,10 +23,10 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
 
   // SEND RESPONSE
   res.status(200).json({
-    status: 'success',
+    status: error || req.error ? 'error' : 'success',
     results: rooms?.length,
     data: { rooms },
-    error,
+    error: req.error ? req.error : error,
   });
 });
 
