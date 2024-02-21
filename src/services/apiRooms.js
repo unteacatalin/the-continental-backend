@@ -3,13 +3,6 @@ import supabase, { supabaseUrl } from './supabase';
 export async function getRooms() {
   let { data: rooms, error } = await supabase.from('rooms').select('*');
 
-  // if (result.status !== 'success') {
-  // if (error) {
-  //   // console.error(result.message);
-  //   console.error(error);
-  //   throw new Error('Rooms data could not be loaded');
-  // }
-  // return result.rooms;
   return {rooms, error};
 }
 
