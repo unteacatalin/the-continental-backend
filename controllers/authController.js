@@ -19,7 +19,7 @@ const signToken = (email) =>
   });
 
 const createSendToken = (results, statusCode, req, res) => {
-  const { user, error } = results;
+  const { data: {user}, error } = results;
 
   if (!error) {
     if(user && user.email) {
@@ -52,7 +52,7 @@ const createSendToken = (results, statusCode, req, res) => {
     // status: error ? 'error' : 'success',
     // token,
     data: { user: {} },
-    error: error && 'You are not logged in! Please log in to get access.',
+    error: error && req.error && 'You are not logged in! Please log in to get access.',
   });
 };
 
