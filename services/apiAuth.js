@@ -46,7 +46,7 @@ exports.login = async function ({ email, password }) {
 
   const user = data.user;
 
-  return { user, error };
+  return { data: {user}, error };
 };
 
 exports.logout = async function () {
