@@ -36,7 +36,7 @@ const setCookie = (res, token) => {
 
 const createSendToken = (results, statusCode, req, res) => {
   console.log({results});
-  const user = results?.data?.user;
+  const user = results?.user;
   const error = results?.error;
 
   if (statusCode.toString().startsWith('2')) {
