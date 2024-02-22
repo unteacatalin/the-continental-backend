@@ -21,7 +21,7 @@ const signToken = (email) =>
 const createSendToken = (results, statusCode, req, res) => {
   const { user, error } = results;
 
-  if(user.email) {
+  if(user && user.email) {
     const token = signToken(user.email);
 
     const cookieOptions = {
