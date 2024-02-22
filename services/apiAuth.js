@@ -60,12 +60,14 @@ exports.logout = async function () {
   return { error };
 };
 
-exports.getCurrentUser = async function (req) {
+exports.getCurrentUser = async function () {
+  let err = '';
+
   const { data: { session } = {} } = await supabase.auth.getSession();
 
   if (!session) {
     console.error('No active session found! Please log in to get access.');
-    req.error = 'No active session found! Please log in to get access.';
+    err = 'No active session found! Please log in to get access.';
   }
     // return next(
     //   new AppError(
@@ -78,13 +80,13 @@ exports.getCurrentUser = async function (req) {
 
   if (error) {
     console.error('You are not logged in! Please log in to get access.');
-    req.error = 'You are not logged in! Please log in to get access.';
+    err = 'You are not logged in! Please log in to get access.';
   }
     // return next(
     //   new AppError('You are not logged in! Please log in to get access.', 401),
     // );
 
-  return user;
+  return {user, error: err};
 };
 
 exports.updateUser = async function ({ password, fullName, avatar, next }) {

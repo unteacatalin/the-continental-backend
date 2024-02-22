@@ -113,8 +113,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.cookies.jwt;
   }
 
-  req.error = '';
-
   if (!token || token === 'null') {
     console.error('You are not logged in! Please log in to get access.');
     req.error = 'You are not logged in! Please log in to get access.';
@@ -127,12 +125,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3) Check if token email is the same for the logedin user
-  const currentUser = await getCurrentUser(req);
+  const {user: currentUser, error: currentUserError} = await getCurrentUser();
 
-  console.log({email1: decode.email, email2: currentUser.email});
+  if (currentUserError) req.error = currentUserError;
 
   if (decode.email !== currentUser.email) {
-    console.log('Token belongs to different user');
+    console.error('Token belongs to different user');
     req.error = 'Token belongs to different user';
     // return next(new AppError('Token belongs to different user'));
   }
@@ -160,24 +158,38 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, req, res);
 });
 
-exports.getMe = catchAsync(async (req, res, next) => {
+// exports.getMe = catchAsync(async (req, res, next) => {
+//   let userData = { data: { user: {} }, error: '' };
+
+//   const user = await getCurrentUser(req);
+
+//   if (!user) {
+//     console.error('You are not logged in! Please log in to get access.');
+//     userData.error = 'You are not logged in! Please log in to get access.';
+//     return createSendToken(userData, 401, req, res);
+//     // return next(
+//     //   new AppError('You are not logged in! Please log in to get access.', 401),
+//     // );
+//   }
+
+//   userData.data.user = user;
+
+//   createSendToken(userData, 200, req, res);
+// });
+
+exports.getMe = (req, res, next) => {
   let userData = { data: { user: {} }, error: '' };
 
-  const user = await getCurrentUser(req);
-
-  if (!user) {
+  if (!req.user) {
     console.error('You are not logged in! Please log in to get access.');
     userData.error = 'You are not logged in! Please log in to get access.';
     return createSendToken(userData, 401, req, res);
-    // return next(
-    //   new AppError('You are not logged in! Please log in to get access.', 401),
-    // );
   }
 
-  userData.data.user = user;
+  userData.data.user = req.user;
 
   createSendToken(userData, 200, req, res);
-});
+}
 
 exports.updateMyUserData = catchAsync(async (req, res, next) => {
   // 1) Get full name and avatar
