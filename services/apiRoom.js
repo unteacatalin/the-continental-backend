@@ -15,7 +15,7 @@ exports.getRooms = async function (req) {
     console.error(error);
   }
 
-  return { data: rooms, error };
+  return { rooms, error };
 };
 
 exports.deleteRoom = async function (id) {
