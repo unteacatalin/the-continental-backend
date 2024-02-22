@@ -20,21 +20,24 @@ const signToken = (email) =>
 
 const createSendToken = (results, statusCode, req, res) => {
   const { user, error } = results;
-  const token = signToken(user.email);
 
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
-    ),
-    httpOnly: true,
-    /*** ACTIVATE LATER ***/
-    // secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    secure: true,
-    sameSite: 'none',
-    partitioned: true,
-  };
+  if(user.email) {
+    const token = signToken(user.email);
 
-  res.cookie('jwt', token, cookieOptions);
+    const cookieOptions = {
+      expires: new Date(
+        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
+      ),
+      httpOnly: true,
+      /*** ACTIVATE LATER ***/
+      // secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      secure: true,
+      sameSite: 'none',
+      partitioned: true,
+    };
+  
+    res.cookie('jwt', token, cookieOptions);  
+  }
 
   return res.status(statusCode).json({
     // status: error ? 'error' : 'success',
