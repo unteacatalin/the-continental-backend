@@ -127,7 +127,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3) Check if token email is the same for the logedin user
-  const currentUser = await getCurrentUser(next);
+  const currentUser = await getCurrentUser(req);
 
   console.log({email1: decode.email, email2: currentUser.email});
 
