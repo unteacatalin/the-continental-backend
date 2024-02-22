@@ -84,7 +84,7 @@ exports.signIn = catchAsync(async (req, res) => {
   // 2) Check if user && password is correct
   userData = await signInApi({ email, password });
 
-  if (!userData || !userData.user) {
+  if (!userData || !userData.data || !userData.data.user) {
     console.error('Incorrect email or password');
     userData.error = 'Incorrect email or password';
     return createSendToken(userData, 401, req, res);
