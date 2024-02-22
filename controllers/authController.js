@@ -18,32 +18,36 @@ const signToken = (email) =>
     expiresIn: `${process.env.JWT_EXPIRES_IN}`,
   });
 
+const setCookie = (res, token) => {
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+    /*** ACTIVATE LATER ***/
+    // secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    secure: true,
+    sameSite: 'none',
+    partitioned: true,
+  };
+
+  res.cookie('jwt', token, cookieOptions);
+}
+
 const createSendToken = (results, statusCode, req, res) => {
   const { data: {user}, error } = results;
 
-  if (!error) {
+  if (statusCode.toString().startsWith('2')) {
     if(user && user.email) {
       const token = signToken(user.email);
 
-      const cookieOptions = {
-        expires: new Date(
-          Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
-        ),
-        httpOnly: true,
-        /*** ACTIVATE LATER ***/
-        // secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-        secure: true,
-        sameSite: 'none',
-        partitioned: true,
-      };
-    
-      res.cookie('jwt', token, cookieOptions);
+      setCookie(res, token);
 
       return res.status(statusCode).json({
         // status: error ? 'error' : 'success',
         // token,
         data: { user },
-        error,
+        error: '',
       });    
     }
   }
@@ -52,7 +56,7 @@ const createSendToken = (results, statusCode, req, res) => {
     // status: error ? 'error' : 'success',
     // token,
     data: { user: {} },
-    error: error && req.error && 'You are not logged in! Please log in to get access.',
+    error,
   });
 };
 
@@ -192,9 +196,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 exports.getMe = (req, res, next) => {
   let userData = { data: { user: {} }, error: '' };
 
-  if (!req.user) {
-    console.error('You are not logged in! Please log in to get access.');
-    userData.error = 'You are not logged in! Please log in to get access.';
+  if (req.error) {
+    console.error(req.error);
+    userData.error = req.error;
     return createSendToken(userData, 401, req, res);
   }
 
