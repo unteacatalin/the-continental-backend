@@ -15,7 +15,7 @@ const supabase = require('../utils/supabase');
 
 const signToken = (email) =>
   jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: `${process.env.JWT_EXPIRES_IN}`,
   });
 
 const createSendToken = (results, statusCode, req, res) => {
@@ -125,6 +125,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 2) Verification token
   const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log({token: decode});
 
   // 3) Check if token email is the same for the logedin user
   const currentUser = await getCurrentUser(next);
