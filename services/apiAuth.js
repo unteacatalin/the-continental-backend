@@ -60,23 +60,29 @@ exports.logout = async function () {
   return { error };
 };
 
-exports.getCurrentUser = async function (next) {
+exports.getCurrentUser = async function (req) {
   const { data: { session } = {} } = await supabase.auth.getSession();
 
-  if (!session)
-    return next(
-      new AppError(
-        'No active session found! Please log in to get access.',
-        401,
-      ),
-    );
+  if (!session) {
+    console.error('No active session found! Please log in to get access.');
+    req.error = 'No active session found! Please log in to get access.';
+  }
+    // return next(
+    //   new AppError(
+    //     'No active session found! Please log in to get access.',
+    //     401,
+    //   ),
+    // );
 
   const { data: { user } = {}, error } = await supabase.auth.getUser();
 
-  if (error)
-    return next(
-      new AppError('You are not logged in! Please log in to get access.', 401),
-    );
+  if (error) {
+    console.error('You are not logged in! Please log in to get access.');
+    req.error = 'You are not logged in! Please log in to get access.';
+  }
+    // return next(
+    //   new AppError('You are not logged in! Please log in to get access.', 401),
+    // );
 
   return user;
 };

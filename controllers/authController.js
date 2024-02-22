@@ -128,7 +128,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 3) Check if token email is the same for the logedin user
   const currentUser = await getCurrentUser(next);
-  console.log({ email1: decode.email, email2: currentUser.email });
 
   if (decode.email !== currentUser.email) {
     console.log('Token belongs to different user');
@@ -162,7 +161,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 exports.getMe = catchAsync(async (req, res, next) => {
   let userData = { data: { user: {} }, error: '' };
 
-  const user = await getCurrentUser(next);
+  const user = await getCurrentUser(req);
 
   if (!user) {
     console.error('You are not logged in! Please log in to get access.');
