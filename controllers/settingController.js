@@ -15,7 +15,9 @@ exports.getSettings = catchAsync(async (req, res, next) => {
     }
 
     // EXECUTE QUERY
-    const { settings, error } = await getSetting();
+    const { data, error } = await getSetting();
+
+    console.log({data});
 
     if (error) {
         console.error(error);
@@ -30,7 +32,7 @@ exports.getSettings = catchAsync(async (req, res, next) => {
     // SEND RESPONSE
     res.status(200).json({
         status: 'success',
-        data: { settings },
+        data: { settings: data?.settings },
         error: ''
     });
 })

@@ -3,8 +3,6 @@ const supabase = require('../utils/supabase');
 exports.getSetting = async function () {
     const { data: settings, error } = await supabase.from("settings").select("*").single();
 
-    console.log({settings});
-
     if (error) {
         console.error(error);
     }
