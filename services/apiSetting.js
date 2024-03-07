@@ -1,6 +1,6 @@
 const supabase = require('../utils/supabase');
 
-exports.getSetting = async function (req) {
+exports.getSetting = async function () {
     const { data: settings, error } = await supabase.from("settings").select("*").single();
 
     if (error) {
