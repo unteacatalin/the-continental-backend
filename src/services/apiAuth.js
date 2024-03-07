@@ -2,37 +2,37 @@ import supabase, { supabaseUrl } from './supabase';
 import axios from 'axios';
 
 export async function signup({ fullName, email, password }) {
-  const {
-    data: { user },
-    error,
-  } = await axios({
-    method: 'POST',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
-    url: 'https://untea-the-continental-backend-b7b62ca8f70a.herokuapp.com/api/v1/users/signup',
-    data: JSON.stringify({
-      email,
-      password,
-      fullName,
-    }),
-    withCredentials: true,
-  });
-  // await supabase.auth.signUp({
-  //   email,
-  //   password,
-  //   options: {
-  //     data: {
-  //       fullName,
-  //       avatar: '',
-  //     },
+  // const {
+  //   data: { user },
+  //   error,
+  // } = await axios({
+  //   method: 'POST',
+  //   headers: {
+  //     'Access-Control-Allow-Origin': '*',
+  //     'Content-Type': 'application/json',
   //   },
+  //   url: 'https://untea-the-continental-backend-b7b62ca8f70a.herokuapp.com/api/v1/users/signup',
+  //   data: JSON.stringify({
+  //     email,
+  //     password,
+  //     fullName,
+  //   }),
+  //   withCredentials: true,
   // });
+  const {data, error} = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        fullName,
+        avatar: '',
+      },
+    },
+  });
 
-  if (error) throw new Error(error);
+  if (error) throw new Error(error.message);
 
-  return user;
+  return data;
 }
 
 export async function login({ email, password }) {
