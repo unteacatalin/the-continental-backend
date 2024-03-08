@@ -15,7 +15,7 @@ const supabase = require('../utils/supabase');
 
 const signToken = (email) =>
   jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: `${process.env.JWT_EXPIRES_IN}`,
+    expiresIn: `${process.env.JWT_EXPIRES_IN}h`,
   });
 
 const setCookie = (res, token) => {

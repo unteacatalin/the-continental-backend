@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-export const supabaseUrl = 'https://mbehgukaiafkgmqfeboa.supabase.co';
+export const supabaseUrl = process.env.SUPABASE_URL;
 
 // JWT expiry time
-export const jwtExpiry = 24 * 60 * 60 * 1000;
+export const jwtExpiry = process.env.JWT_EXPIRES_IN * 60 * 60 * 1000;
 
-const supabaseKey = supabaseKey = process.env.SUPABASE_KEY;
+const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default supabase;
