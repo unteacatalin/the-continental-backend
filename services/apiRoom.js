@@ -11,9 +11,9 @@ exports.getRooms = async function (req) {
   // EXECUTE QUERY
   const { data: rooms, error } = await features.query;
 
-  if (error) {
-    console.error(error);
-  }
+  // if (error) {
+  //   console.error(error);
+  // }
 
   return { rooms, error };
 };
@@ -21,9 +21,9 @@ exports.getRooms = async function (req) {
 exports.deleteRoom = async function (id) {
   const { error } = await supabase.from('rooms').delete().eq('id', id);
 
-  if (error) {
-    console.error(error);
-  }
+  // if (error) {
+  //   console.error(error);
+  // }
 
   return { data: { room: {} }, error };
 };
