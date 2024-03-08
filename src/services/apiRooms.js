@@ -3,20 +3,18 @@ import supabase, { supabaseUrl } from './supabase';
 export async function getRooms() {
   let { data: rooms, error } = await supabase.from('rooms').select('*');
 
-  console.log({rooms});
-
   return {rooms, error};
 }
 
 export async function deleteRoom(id) {
   const { error } = await supabase.from('rooms').delete().eq('id', id);
 
-  if (error) {
-    console.error(error);
-    throw new Error('Room data could not be deleted');
-  }
+  // if (error) {
+  //   console.error(error);
+  //   throw new Error('Room data could not be deleted');
+  // }
 
-  return {};
+  return {data: {}, error};
 }
 
 export async function createEditRoom(newRoom, id) {

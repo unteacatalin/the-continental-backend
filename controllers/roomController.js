@@ -13,23 +13,24 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
   //   filter = { tour: req.params.tourid };
   // }
 
-  if (req.error) {
-    // SEND RESPONSE
-    res.status(401).json({
-      status: 'error',
-      data: { },
-      error: req.error,
-    });  
-  }
+  // if (req.error) {
+  //   console.error(req.error);
+  //   // SEND RESPONSE
+  //   return res.status(401).json({
+  //     status: 'error',
+  //     data: { },
+  //     error: req.error,
+  //   });  
+  // }
 
   // EXECUTE QUERY
-  const { rooms, error } = await getRooms(req);
+  const { rooms, error } = await getRooms();
 
   if (error) {
     console.error(error);
     // return next(new AppError('Rooms data could not be loaded', 400));
       // SEND RESPONSE
-    res.status(400).json({
+    return res.status(400).json({
       status: 'error',
       data: { },
       error,
@@ -49,20 +50,33 @@ exports.deleteRoom = catchAsync(async (req, res, next) => {
   const id = req.params.id;
 
   if (!id) {
-    return next(new AppError('Missing room id', 400));
+    console.error('Missing room id');
+
+    return res.status(400).json({
+      status: 'error',
+      data: { },
+      error: 'Missing room id'
+    }); 
+    // return next(new AppError('Missing room id', 400));
   }
 
   const { data: room, error } = await deleteRoomApi(id);
 
   if (error) {
     console.error(error);
-    return next(new AppError('Room data could not be deleted'));
+    // return next(new AppError('Room data could not be deleted'));
+    return res.status(400).json({
+      status: 'error',
+      data: { },
+      error: 'Room data could not be deleted'
+    }); 
   }
 
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
     data: room,
+    error: ''
   });
 });
 
