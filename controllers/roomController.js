@@ -60,7 +60,7 @@ exports.deleteRoom = catchAsync(async (req, res, next) => {
     // return next(new AppError('Missing room id', 400));
   }
 
-  const { data: room, error } = await deleteRoomApi(id);
+  const { error } = await deleteRoomApi(id);
 
   if (error) {
     console.error(error);
@@ -75,7 +75,7 @@ exports.deleteRoom = catchAsync(async (req, res, next) => {
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
-    data: room,
+    data: { },
     error: ''
   });
 });

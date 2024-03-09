@@ -25,7 +25,7 @@ exports.deleteRoom = async function (id) {
   //   console.error(error);
   // }
 
-  return { data: { room: {} }, error };
+  return { error };
 };
 
 exports.createEditRoom = async function ({ newRoom, id }) {
