@@ -28,7 +28,7 @@ exports.deleteRoom = async function (id) {
   return { error };
 };
 
-exports.getImage = function (hasImage, newRoom) {
+const getImage = function (hasImage, newRoom) {
   const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
 
   const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
@@ -46,34 +46,47 @@ exports.getImage = function (hasImage, newRoom) {
   return { hasImagePath, imageName, imagePath }
 }
 
+const addRoom = async function (newRoom) {
+
+  const { data, error } = await supabase.from('rooms').insert([{ ...newRoom, image: imagePath }]).select();
+
+  if (error) {
+    console.error(error);
+  }
+
+  return { data, error }
+}
+
+const editRoom = async function (newRoom, id) {
+  const { data, error } = await supabase.from('rooms').update({ ...newRoom, image: imagePath }).eq('id', id).select();
+
+  if (error) {
+    console.error(error);
+  }
+
+  return { data, error }
+}
+
 exports.createEditRoom = async function ({ newRoom, id }) {
   const hasImage = !!newRoom?.image;
 
-  const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
+  const { hasImagePath, imageName, imagePath } = getImage(hasImage, newRoom);
 
-  const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
-    '/',
-    '',
-  );
+  let room, error;
 
-  const imagePath = hasImage
-    ? hasImagePath
-      ? newRoom.image
-      : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
-    : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
-
-  // 1) Create/edit room
-  let query = supabase.from('rooms');
+  // 1. Create/Update room
 
   if (!id) {
-    // A) CREATE
-    query = query.insert([{ ...newRoom, image: imagePath }]);
+    // A) CREATE ROOM
+    const { data, error: addRoomError } = await addRoom({...newRoom, image: imagePath});
+    room = data;
+    error = addRoomError;
   } else {
-    // B) Edit
-    query = query.update({ ...newRoom, image: imagePath }).eq('id', id);
+    // B) UPDATE ROOM
+    const { data, error: updateRoomError } = await updateRoomError({...newRoom, image: imagePath}, id);
+    room = data;
+    error = updateRoomError;
   }
-
-  const { data: room, error } = await query.select();
 
   if (error) {
     console.error(error);
@@ -87,7 +100,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
     .from('room-images')
     .upload(imageName, newRoom.image);
 
-  // 3. Delete the cabin IF there was an image uploading image
+  // 3. Delete the cabin IF there was an error uploading image
   if (storageError) {
     await supabase.from('rooms').delete().eq('id', data.id);
     console.error(storageError);
