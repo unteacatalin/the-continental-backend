@@ -28,6 +28,24 @@ exports.deleteRoom = async function (id) {
   return { error };
 };
 
+exports.getImage = function (hasImage, newRoom) {
+  const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
+
+  const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
+    '/',
+    '',
+  );
+
+  const imagePath = hasImage
+    ? hasImagePath
+      ? newRoom.image
+      : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
+    : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
+
+
+  return { hasImagePath, imageName, imagePath }
+}
+
 exports.createEditRoom = async function ({ newRoom, id }) {
   const hasImage = !!newRoom?.image;
 

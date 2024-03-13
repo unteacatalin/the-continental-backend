@@ -2,6 +2,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const {
   getRooms,
+  getImage,
   deleteRoom: deleteRoomApi,
   createEditRoom: createEditRoomApi,
 } = require('../services/apiRoom');
@@ -45,6 +46,24 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
     error: '',
   });
 });
+
+exports.getImageInfo = function (req, res, next) {
+    const { hasImage, newRoom } = req.body;
+
+    let error;
+
+    if (!hasImage || !newRoom) {
+      error = 'Missing info in request!';
+    }
+
+    // EXECUTE QUERY
+    const { hasImagePage, imageName, imagePath } = getImage(hasImage, newRoom);
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      data: {hasImagePage, imageName, imagePath}, error
+    });
+};
 
 exports.deleteRoom = catchAsync(async (req, res, next) => {
   const id = req.params.id;
