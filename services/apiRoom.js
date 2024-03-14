@@ -42,6 +42,7 @@ const getImage = function (hasImage, newRoom) {
       : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
     : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
 
+  console.log({getImagePath: imagePath});
 
   return { hasImagePath, imageName, imagePath }
 }
@@ -72,6 +73,8 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
   const { hasImagePath, imageName, imagePath } = getImage(hasImage, newRoom);
 
+  console.log({createEditRoomImagePath: imagePath});
+
   let room, error;
 
   // 1. Create/Update room
@@ -83,7 +86,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
     error = addRoomError;
   } else {
     // B) UPDATE ROOM
-    const { data, error: updateRoomError } = await updateRoomError({...newRoom, image: imagePath}, id);
+    const { data, error: updateRoomError } = await editRoom({...newRoom, image: imagePath}, id);
     room = data;
     error = updateRoomError;
   }
