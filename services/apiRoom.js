@@ -49,7 +49,7 @@ const getImage = function (hasImage, newRoom) {
 
 const addRoom = async function (newRoom) {
 
-  const { data, error } = await supabase.from('rooms').insert([{ ...newRoom, image: imagePath }]).select();
+  const { data, error } = await supabase.from('rooms').insert([newRoom]).select();
 
   if (error) {
     console.error(error);
@@ -59,7 +59,7 @@ const addRoom = async function (newRoom) {
 }
 
 const editRoom = async function (newRoom, id) {
-  const { data, error } = await supabase.from('rooms').update({ ...newRoom, image: imagePath }).eq('id', id).select();
+  const { data, error } = await supabase.from('rooms').update(newRoom).eq('id', id).select();
 
   if (error) {
     console.error(error);
