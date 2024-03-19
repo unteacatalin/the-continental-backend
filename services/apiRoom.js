@@ -68,7 +68,7 @@ const editRoom = async function (newRoom, id) {
   return { data, error }
 }
 
-exports.createEditRoom = async function ({ newRoom, id }) {
+exports.createEditRoom = async function ({ newRoom, req, id }) {
   const hasImage = !!newRoom?.image;
 
   const { hasImagePath, imageName, imagePath } = getImage(hasImage, newRoom);
@@ -98,19 +98,42 @@ exports.createEditRoom = async function ({ newRoom, id }) {
   if (hasImagePath)
     return { data: { room: Array.isArray(room) ? room[0] : room }, error };
 
-  // 2. Update image
-  const { error: storageError } = await supabase.storage
-    .from('room-images')
-    .upload(imageName, newRoom.image);
+  // const uploadFile = req.files.file;
+  // const name = uploadFile.name;
+  // const md5 = uploadFile.md5();
+  // const saveAs = `${md5}_${name}`;
+  // uploadFile.mv(`${__dirname}/public/files/temp/${saveAs}`, function(err) {
+  //   if (err) {
+  //     return res.status(500).send(err);
+  //   }
+  // });    
 
-  // 3. Delete the cabin IF there was an error uploading image
-  if (storageError) {
-    await supabase.from('rooms').delete().eq('id', data.id);
-    console.error(storageError);
-  }
+  req.busboy.on('file', async function (name, file, info) {
+    console.log("received file");
+    var fstream = fs.createWriteStream('./public/files/temp/' + name);
+    file.pipe(fstream);
+    fstream.on('close', async function () {
+      // 2. Update image
+      const { error: storageError } = await supabase.storage
+      .from('room-images')
+      .upload('./public/files/temp/' + name, newRoom.image);
 
-  return {
-    data: { room: Array.isArray(room) ? room[0] : room },
-    error: storageError,
-  };
+      // 3. Delete the cabin IF there was an error uploading image
+      if (storageError) {
+        await supabase.from('rooms').delete().eq('id', data.id);
+        console.error(storageError);
+      }
+
+      console.log("saved file");
+
+      return {
+        data: { room: Array.isArray(room) ? room[0] : room },
+        error: storageError,
+      };
+    });
+  });
+  req.pipe(req.busboy);
+
+  return { data: {room: {}}, error: 'Could not load image!'};
+
 };

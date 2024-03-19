@@ -105,7 +105,7 @@ exports.createEditRoom = catchAsync(async (req, res, next) => {
 
   console.log({ id, newRoom });
 
-  const { data: room, error } = await createEditRoomApi({ newRoom, id });
+  const { data: room, error } = await createEditRoomApi({ newRoom, req, id });
 
   if (error) {
     console.error(error);

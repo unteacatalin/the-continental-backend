@@ -8,6 +8,8 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+// const fileUpload = require('express-fileupload');
+let busboy = require('connect-busboy')
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -98,6 +100,22 @@ app.use(cookieParser());
 app.use(xss());
 
 app.use(compression());
+
+app.use(busboy({
+  highWaterMark: 1 * 1024 * 1024,
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  }  
+}));
+  // fileUpload({
+  //   limits: { fileSize: 2 * 1024 * 1024 },
+  //   abortOnLimit: true,
+  //   // useTempFiles: true,
+  //   // safeFileNames: true,
+  //   // preserveExtension: true,
+  //   // tempFileDir: `${__dirname}/public/files/temp`
+  // })
+// );
 
 // ROUTES
 app.use('/api/v1/rooms', roomRouter);
