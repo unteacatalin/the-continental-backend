@@ -42,8 +42,6 @@ const getImage = function (hasImage, newRoom) {
       : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
     : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
 
-  console.log({getImagePath: imagePath});
-
   return { hasImagePath, imageName, imagePath }
 }
 
@@ -73,7 +71,7 @@ exports.createEditRoom = async function ({ newRoom, req, id }) {
 
   const { hasImagePath, imageName, imagePath } = getImage(hasImage, newRoom);
 
-  console.log({createEditRoomImagePath: imagePath});
+  console.log({createEditRoomReq: req});
 
   let room, error;
 
@@ -108,31 +106,33 @@ exports.createEditRoom = async function ({ newRoom, req, id }) {
   //   }
   // });    
 
-  req.busboy.on('file', async function (name, file, info) {
-    console.log("received file");
-    var fstream = fs.createWriteStream('./public/files/temp/' + name);
-    file.pipe(fstream);
-    fstream.on('close', async function () {
-      // 2. Update image
-      const { error: storageError } = await supabase.storage
-      .from('room-images')
-      .upload('./public/files/temp/' + name, newRoom.image);
+  if (req.busboy) {
+    req.busboy.on('file', async function (name, file, info) {
+      console.log("received file");
+      var fstream = fs.createWriteStream('./public/files/temp/' + name);
+      file.pipe(fstream);
+      fstream.on('close', async function () {
+        // 2. Update image
+        const { error: storageError } = await supabase.storage
+        .from('room-images')
+        .upload('./public/files/temp/' + name, newRoom.image);
 
-      // 3. Delete the cabin IF there was an error uploading image
-      if (storageError) {
-        await supabase.from('rooms').delete().eq('id', data.id);
-        console.error(storageError);
-      }
+        // 3. Delete the cabin IF there was an error uploading image
+        if (storageError) {
+          await supabase.from('rooms').delete().eq('id', data.id);
+          console.error(storageError);
+        }
 
-      console.log("saved file");
+        console.log("saved file");
 
-      return {
-        data: { room: Array.isArray(room) ? room[0] : room },
-        error: storageError,
-      };
+        return {
+          data: { room: Array.isArray(room) ? room[0] : room },
+          error: storageError,
+        };
+      });
     });
-  });
-  req.pipe(req.busboy);
+    req.pipe(req.busboy);
+  }
 
   return { data: {room: {}}, error: 'Could not load image!'};
 
