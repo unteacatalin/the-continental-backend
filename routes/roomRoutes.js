@@ -4,7 +4,7 @@ const {
   getAllRooms,
   deleteRoom,
   createEditRoom,
-  uploadImage
+  uploadRoomImage
 } = require('../controllers/roomController');
 const { protect } = require('../controllers/authController');
 
@@ -14,7 +14,7 @@ router.use(protect);
 
 router.route('/').get(getAllRooms).post(createEditRoom);
 
-router.post('/image', uploadImage);
+router.post('/image', uploadRoomImage);
 router.route('/:id').patch(createEditRoom).delete(deleteRoom);
 //   .post(protect, restrictTo('admin', 'lead-guide'), createTour);
 
