@@ -108,6 +108,7 @@ exports.createEditRoom = async function ({ newRoom, req, id }) {
 
   if (req.busboy) {
     req.busboy.on('file', async function (name, file, info) {
+
       console.log("received file");
       var fstream = fs.createWriteStream('./public/files/temp/' + name);
       file.pipe(fstream);
@@ -136,4 +137,41 @@ exports.createEditRoom = async function ({ newRoom, req, id }) {
 
   return { data: {room: {}}, error: 'Could not load image!'};
 
+};
+
+exports.uploadImage = async function(hasImage, newRoom) {
+  let error, hasImagePath, imageName, imagePath;
+
+  if (!newRoom.image) {
+    error = 'Missing image!';
+    console.error(error);
+    hasImagePath = false; 
+    imageName = '';
+    imagePath = '';
+    return { data: {hasImagePath, imageName, imagePath}, error }
+  }
+
+  hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
+
+  imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
+    '/',
+    '',
+  );
+
+  imagePath = hasImage
+    ? hasImagePath
+      ? newRoom.image
+      : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
+    : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
+
+  if (!hasImagePath) {
+    const { data, error: errorUploading } = await supabase.storage.from('room-images').upload(imageName, image)
+    if (errorUploading) {
+      console.error(errorUploading);
+      error = 'Could not upload image!'
+    }
+    imagePath = `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`;
+  }
+  
+  return { data: {hasImagePath, imageName, imagePath}, error }
 };

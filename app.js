@@ -72,6 +72,13 @@ app.use(
   }),
 );
 
+app.use(busboy({
+  highWaterMark: 1 * 1024 * 1024,
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  }  
+}));
+
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -101,12 +108,6 @@ app.use(xss());
 
 app.use(compression());
 
-app.use(busboy({
-  highWaterMark: 1 * 1024 * 1024,
-  limits: {
-    fileSize: 2 * 1024 * 1024,
-  }  
-}));
   // fileUpload({
   //   limits: { fileSize: 2 * 1024 * 1024 },
   //   abortOnLimit: true,
