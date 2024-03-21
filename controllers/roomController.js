@@ -105,7 +105,7 @@ exports.createEditRoom = catchAsync(async (req, res, next) => {
 
   console.log({ id, newRoom });
 
-  const { data: room, error } = await createEditRoomApi({ newRoom, req, id });
+  const { data: room, error } = await createEditRoomApi({ newRoom, id });
 
   if (error) {
     console.error(error);
@@ -125,11 +125,8 @@ exports.createEditRoom = catchAsync(async (req, res, next) => {
 });
 
 exports.uploadRoomImage = catchAsync(async (req, res, next) => {
-  const newRoom = req.body;
 
-  console.log({ uploadRoomImage: newRoom });
-
-  const { data, error } = await uploadImageApi(newRoom);
+  const { data, error } = await uploadImageApi(req);
 
   if (error) {
     console.error(error);
@@ -140,7 +137,7 @@ exports.uploadRoomImage = catchAsync(async (req, res, next) => {
     });
   }
 
-  if (!data.hasImagePath || !data.imageName || !data.imagePath) {
+  if (!data.imageName) {
     return res.status(400).json({
       status: 'error',
       data: { },
@@ -148,13 +145,12 @@ exports.uploadRoomImage = catchAsync(async (req, res, next) => {
     });
   }
 
-  const hasImagePath = data?.hasImagePath;
   const imageName = data?.imageName;
-  const imagePath = data?.imagePath;
 
   // SEND RESPONSE
   res.status(201).json({
     status: 'success',
-    data: { hasImagePath, imageName, imagePath },
+    data: { imageName },
+    error: ''
   });
 });

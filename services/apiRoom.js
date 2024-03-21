@@ -31,18 +31,20 @@ exports.deleteRoom = async function (id) {
 const getImage = function (hasImage, newRoom) {
   const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
 
-  const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
-    '/',
-    '',
-  );
+  // const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
+  //   '/',
+  //   '',
+  // );
 
   const imagePath = hasImage
     ? hasImagePath
-      ? newRoom.image
-      : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
+      // ? newRoom.image
+      ? newRoom.imageName
+      // : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
+      : newRoom.imageName
     : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
 
-  return { hasImagePath, imageName, imagePath }
+  return { hasImagePath, imagePath }
 }
 
 const addRoom = async function (newRoom) {
@@ -66,12 +68,10 @@ const editRoom = async function (newRoom, id) {
   return { data, error }
 }
 
-exports.createEditRoom = async function ({ newRoom, req, id }) {
+exports.createEditRoom = async function ({ newRoom, id }) {
   const hasImage = !!newRoom?.image;
 
-  const { hasImagePath, imageName, imagePath } = getImage(hasImage, newRoom);
-
-  console.log({createEditRoomReq: req});
+  const { hasImagePath, imagePath } = getImage(hasImage, newRoom);
 
   let room, error;
 
@@ -104,74 +104,44 @@ exports.createEditRoom = async function ({ newRoom, req, id }) {
   //   if (err) {
   //     return res.status(500).send(err);
   //   }
-  // });    
-
-  if (req.busboy) {
-    req.busboy.on('file', async function (name, file, info) {
-
-      console.log("received file");
-      var fstream = fs.createWriteStream('./public/files/temp/' + name);
-      file.pipe(fstream);
-      fstream.on('close', async function () {
-        // 2. Update image
-        const { error: storageError } = await supabase.storage
-        .from('room-images')
-        .upload('./public/files/temp/' + name, newRoom.image);
-
-        // 3. Delete the cabin IF there was an error uploading image
-        if (storageError) {
-          await supabase.from('rooms').delete().eq('id', data.id);
-          console.error(storageError);
-        }
-
-        console.log("saved file");
-
-        return {
-          data: { room: Array.isArray(room) ? room[0] : room },
-          error: storageError,
-        };
-      });
-    });
-    req.pipe(req.busboy);
-  }
-
-  return { data: {room: {}}, error: 'Could not load image!'};
+  // }); 
 
 };
 
-exports.uploadImage = async function(hasImage, newRoom) {
-  let error, hasImagePath, imageName, imagePath;
+exports.uploadImage = async function(req) {
+  let fileName, error;
+  if (req.busboy) {
+    req.busboy.on('file', async function (name, file, info) {
+      // 1. Stream the file in a temp folder
+      console.log({name, file, info});
+      console.log("received file");
+      var fstream = fs.createWriteStream('./public/files/temp/' + name);
+      file.pipe(fstream);
 
-  if (!newRoom.image) {
-    error = 'Missing image!';
-    console.error(error);
-    hasImagePath = false; 
-    imageName = '';
-    imagePath = '';
-    return { data: {hasImagePath, imageName, imagePath}, error }
-  }
+      fstream.on('close', async function () {
+        // 2. Update image
+        const { data, error: storageError } = await supabase.storage
+          .from('room-images')
+          .upload('./public/files/temp/' + name, file);
 
-  hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
-
-  imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
-    '/',
-    '',
-  );
-
-  imagePath = hasImage
-    ? hasImagePath
-      ? newRoom.image
-      : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
-    : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
-
-  if (!hasImagePath) {
-    const { data, error: errorUploading } = await supabase.storage.from('room-images').upload(imageName, image)
-    if (errorUploading) {
-      console.error(errorUploading);
-      error = 'Could not upload image!'
-    }
-    imagePath = `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`;
+        // 3. Send an error if the file could not be uploaded into Supabase
+        if (storageError) {
+          error = 'Could not upload image!';
+          console.error(storageError);
+          // await supabase.from('rooms').delete().eq('id', data.id);
+          // console.error(storageError);
+        } else {
+          fileName = name;
+          console.log("saved file");
+        }     
+      });      
+    });
+    req.pipe(req.busboy);
+    return {
+      data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${fileName}`},
+      error,
+    };
   }
   
-  return { data: {hasImagePath, imageName, imagePath}, error }
+  return { data: {imageName: ''}, error }
 };
