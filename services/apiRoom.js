@@ -110,8 +110,9 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 exports.uploadImage = async function(req) {
   let fileName, error;
+  console.log("before busboy!!!");
   if (req.busboy) {
-    console.log("busboy!!!");
+    console.log("I'm busboy!!!");
     req.busboy.on('file', async function (name, file, info) {
       // 1. Stream the file in a temp folder
       console.log({name, file, info});
