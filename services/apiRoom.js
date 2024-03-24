@@ -138,12 +138,12 @@ exports.uploadImage = async function(req) {
         }     
       });      
     });
+    req.pipe(req.busboy);
     return {
       data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${fileName}`},
       error,
     };
   }
-  req.pipe(req.busboy);
   
   return { data: {imageName: ''}, error }
 };
