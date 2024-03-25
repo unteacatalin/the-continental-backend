@@ -128,7 +128,7 @@ exports.uploadImage = async function(req) {
       });
 
       memStream.on('end', async function() {
-        if (!info.filename) {
+        if (!info.filename || !info.mimeType) {
           error = 'Missing file name!';
           console.error('Missing file name!');
 
@@ -136,7 +136,7 @@ exports.uploadImage = async function(req) {
           // 2. Update image
           const { data, error: storageError } = await supabase.storage
             .from('room-images')
-            .upload(info.filename, dataFile, { cacheControl: '3600', upsert: true });
+            .upload(info.filename, dataFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
   
           // 3. Send an error if the file could not be uploaded into Supabase
           if (storageError) {
