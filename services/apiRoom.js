@@ -122,9 +122,9 @@ exports.uploadImage = async function(req) {
       var memStream = new MemoryStream(['Image',' ']);
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
-      var data = '';
+      var dataFile = '';
       memStream.on('data', function(chunk) {
-	      data += chunk.toString();
+	      dataFile += chunk.toString();
       });
 
       memStream.on('end', async function() {
@@ -136,7 +136,7 @@ exports.uploadImage = async function(req) {
           // 2. Update image
           const { data, error: storageError } = await supabase.storage
             .from('room-images')
-            .upload(info.filename, data);
+            .upload(info.filename, dataFile);
   
           // 3. Send an error if the file could not be uploaded into Supabase
           if (storageError) {
