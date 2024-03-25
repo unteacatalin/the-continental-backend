@@ -1,7 +1,7 @@
 const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
-const fs = require('fs'),
+const fs = require('fs');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
