@@ -2,6 +2,7 @@ const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
 const fs = require('fs');
+const MemoryStream = require('memorystream');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -118,26 +119,41 @@ exports.uploadImage = async function(req) {
       // 1. Stream the file in a temp folder
       console.log({name, file, info});
       console.log("received file");
-      var fstream = fs.createWriteStream('./public/files/temp/' + name);
-      file.pipe(fstream);
+      var memStream = new MemoryStream(['Image',' ']);
+      // var fstream = fs.createWriteStream('./public/files/temp/' + name);
+      // file.pipe(fstream);
+      var data = '';
+      memStream.on('data', function(chunk) {
+	      data += chunk.toString();
+      });
 
-      fstream.on('close', async function () {
-        // 2. Update image
-        const { data, error: storageError } = await supabase.storage
-          .from('room-images')
-          .upload('./public/files/temp/' + name, file);
+      memStream.on('end', async function() {
+        if (!info.filename) {
+          error = 'Missing file name!';
+          console.error('Missing file name!');
 
-        // 3. Send an error if the file could not be uploaded into Supabase
-        if (storageError) {
-          error = 'Could not upload image!';
-          console.error(storageError);
-          // await supabase.from('rooms').delete().eq('id', data.id);
-          // console.error(storageError);
         } else {
-          fileName = name;
-          console.log("saved file");
-        }     
-      });      
+          // 2. Update image
+          const { data, error: storageError } = await supabase.storage
+            .from('room-images')
+            .upload(info.filename, data);
+  
+          // 3. Send an error if the file could not be uploaded into Supabase
+          if (storageError) {
+            error = 'Could not upload image!';
+            console.error(storageError);
+            // await supabase.from('rooms').delete().eq('id', data.id);
+            // console.error(storageError);
+          } else {
+            fileName = name;
+            console.log("saved file");
+          }     
+        }
+      });
+      memStream.end('!');      
+
+      // fstream.on('close', async function () {
+      // });      
     });
     req.pipe(req.busboy);
     return {
