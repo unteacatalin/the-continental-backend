@@ -126,7 +126,6 @@ exports.createEditRoom = catchAsync(async (req, res, next) => {
 
 exports.uploadRoomImage = catchAsync(async (req, res, next) => {
 
-  console.log('Am I here???');
   const { data, error } = await uploadImageApi(req);
 
   if (error) {
