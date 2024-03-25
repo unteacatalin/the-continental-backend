@@ -124,7 +124,7 @@ exports.uploadImage = async function(req) {
       // file.pipe(fstream);
       var dataFile = '';
       memStream.on('data', function(chunk) {
-	      dataFile += chunk.toString();
+	      dataFile += chunk;
       });
 
       memStream.on('end', async function() {
