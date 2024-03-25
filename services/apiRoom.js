@@ -136,7 +136,7 @@ exports.uploadImage = async function(req) {
           // 2. Update image
           const { data, error: storageError } = await supabase.storage
             .from('room-images')
-            .upload(info.filename, dataFile);
+            .upload(info.filename, dataFile, { cacheControl: '3600', upsert: true });
   
           // 3. Send an error if the file could not be uploaded into Supabase
           if (storageError) {
