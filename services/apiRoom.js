@@ -119,13 +119,15 @@ exports.uploadImage = async function(req) {
       // 1. Stream the file in a temp folder
       console.log({name, file, info});
       console.log("received file");
-      var memStream = new MemoryStream(['Image',' ']);
+      var memStream = new MemoryStream();
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
       var dataFile = '';
       memStream.on('data', function(chunk) {
 	      dataFile += chunk;
       });
+
+      memStream.write(file);
 
       memStream.on('end', async function() {
         if (!info.filename || !info.mimeType) {
