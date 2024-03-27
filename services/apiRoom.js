@@ -124,10 +124,10 @@ exports.uploadImage = async function(req) {
       // file.pipe(fstream);
       var dataFileBufs = [];
       memStream.on('data', function(chunk) {
-	      dataFileBufs.push(Bugger.from(chunk, 'base64'));
+	      dataFileBufs.push(chunk);
       });
 
-      memStream.write(file);
+      memStream.write(Bugger.from(file, 'base64'));
 
       memStream.on('end', async function() {
         var dataFile = Buffer.concat(dataFileBufs);
