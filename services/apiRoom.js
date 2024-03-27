@@ -123,6 +123,11 @@ exports.uploadImage = async function(req) {
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
       var dataFileBufs = [];
+
+      memStream.on('error', function(err) {
+        console.error(err);
+      })
+
       memStream.on('data', function(chunk) {
 	      dataFileBufs.push(chunk);
       });
