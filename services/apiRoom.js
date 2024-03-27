@@ -119,23 +119,26 @@ exports.uploadImage = async function(req) {
       // 1. Stream the file in a temp folder
       console.log({name, file, info});
       console.log("received file");
-      var memStream = new MemoryStream();
+      var memStream = new MemoryStream([]);
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
-      var dataFileBufs = [];
+      // var dataFileBufs = [];
 
+      let dataFile = [];
       memStream.on('error', function(err) {
         console.error(err);
       })
 
       memStream.on('data', function(chunk) {
-	      dataFileBufs.push(chunk);
+	      // dataFileBufs.push(chunk);
+        dataFile += chunk.toString();
       });
 
-      memStream.write(Buffer.from(file, 'base64'));
+      // memStream.write(Buffer.from(file, 'base64'));
+      memStream.write(file);
 
       memStream.on('end', async function() {
-        var dataFile = Buffer.concat(dataFileBufs);
+        // var dataFile = Buffer.concat(dataFileBufs);
         if (!info.filename || !info.mimeType) {
           error = 'Missing file name!';
           console.error('Missing file name!');
