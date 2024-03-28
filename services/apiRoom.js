@@ -120,7 +120,7 @@ exports.uploadImage = async function(req) {
       // 1. Stream the file in a temp folder
       console.log({name, file, info});
       console.log("received file");
-      var memStream = new MemoryStream(['']);
+      var memStream = new MemoryStream();
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
       // var dataFileBufs = [];
@@ -140,7 +140,7 @@ exports.uploadImage = async function(req) {
       });
 
       // memStream.write(Buffer.from(file, 'base64'));
-      console.log({file: file?.data?.image?.toString()});
+      console.log({file: file?.pipe()});
       // memStream.write(file?.data?.image);
 
       memStream.on('end', async function() {
