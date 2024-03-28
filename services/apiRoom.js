@@ -3,6 +3,7 @@ const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
 const fs = require('fs');
 const MemoryStream = require('memorystream');
+const { Buffer } = require('node:buffer');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -138,8 +139,8 @@ exports.uploadImage = async function(req) {
         dataFile += chunk.toString();
       });
 
-      // memStream.write(Buffer.from(file, 'base64'));
-      memStream.write(file);
+      memStream.write(Buffer.from(file, 'base64'));
+      // memStream.write(file);
 
       memStream.on('end', async function() {
         // var dataFile = Buffer.concat(dataFileBufs);
