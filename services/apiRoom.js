@@ -139,7 +139,7 @@ exports.uploadImage = async function(req) {
         dataFile += chunk.toString();
       });
 
-      memStream.write(Buffer.from(file, 'base64'));
+      // memStream.write(Buffer.from(file, 'base64'));
       // memStream.write(file);
 
       memStream.on('end', async function() {
