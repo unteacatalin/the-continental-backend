@@ -140,8 +140,8 @@ exports.uploadImage = async function(req) {
       });
 
       // memStream.write(Buffer.from(file, 'base64'));
-      console.log({file: file?.image?.toString()});
-      // memStream.write(file.getImage());
+      console.log({file: file?.data?.image?.toString()});
+      // memStream.write(file?.data?.image);
 
       memStream.on('end', async function() {
         // var dataFile = Buffer.concat(dataFileBufs);
