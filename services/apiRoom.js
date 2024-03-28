@@ -119,14 +119,18 @@ exports.uploadImage = async function(req) {
       // 1. Stream the file in a temp folder
       console.log({name, file, info});
       console.log("received file");
-      var memStream = new MemoryStream([]);
+      var memStream = new MemoryStream(['']);
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
       // var dataFileBufs = [];
 
-      let dataFile = [];
+      let dataFile = '';
       memStream.on('error', function(err) {
         console.error(err);
+        return {
+          data: {},
+          error: err,
+        };
       })
 
       memStream.on('data', function(chunk) {
@@ -140,9 +144,12 @@ exports.uploadImage = async function(req) {
       memStream.on('end', async function() {
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!info.filename || !info.mimeType) {
-          error = 'Missing file name!';
-          console.error('Missing file name!');
-
+          error = 'Missing file name or file type!';
+          console.error(error);
+          return {
+            data: {},
+            error,
+          };
         } else {
           // 2. Update image
           const { data, error: storageError } = await supabase.storage
