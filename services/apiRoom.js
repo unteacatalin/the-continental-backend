@@ -119,7 +119,7 @@ exports.uploadImage = async function(req) {
     let imageFile = null;
     let name = '';
     let info = {};
-    req.busboy.on('file', function (name, file, info) {
+    req.busboy.on('file', async function (name, file, info) {
       // 1. Stream the file in a temp folder
       // console.log({name, file, info});
       // console.log("received file");
