@@ -149,18 +149,7 @@ exports.uploadImage = async function(req) {
       });
 
       console.log('busboy file end!!!');
-    });
-      // memStream.on('data', function(chunk) {
-	    //   // dataFileBufs.push(chunk);
-      //   dataFile += chunk.toString();
-      // });
-
-      // memStream.write(Buffer.from(file, 'base64'));
-      // console.log({file: file?.pipe()});
-      // memStream.write(file?.data?.image);
-
-      // memStream.on('end', async function() {
-    req.busboy.on('close', async function() {
+    }).on('close', async function() {
         console.log('busboy finish start!!!');
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!imageFile) {
