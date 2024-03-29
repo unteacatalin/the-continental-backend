@@ -160,7 +160,7 @@ exports.uploadImage = async function(req) {
       // memStream.write(file?.data?.image);
 
       // memStream.on('end', async function() {
-    req.busboy.on('finish', async function() {
+    req.busboy.on('close', async function() {
         console.log('busboy finish start!!!');
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!imageFile) {
