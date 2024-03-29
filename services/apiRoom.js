@@ -117,6 +117,8 @@ exports.uploadImage = async function(req) {
   if (req.busboy) {
     console.log("I'm busboy!!!");
     let imageFile = null;
+    let name = '';
+    let info = {};
     req.busboy.on('file', async function (name, file, info) {
       // 1. Stream the file in a temp folder
       // console.log({name, file, info});
@@ -134,7 +136,8 @@ exports.uploadImage = async function(req) {
       //     error: err,
       //   };
       // })
-      
+      name = name;
+      info = info;
       file.on('data', (data) => {
         console.log('busboy file start!!!');
         if (imageFile === null) {
@@ -143,43 +146,45 @@ exports.uploadImage = async function(req) {
           imageFile = Buffer.concat([imageFile, data]);
         }
         console.log('busboy finish end!!!');
-      }).on('close', async function() {
-        console.log('busboy finish start!!!');
-        // var dataFile = Buffer.concat(dataFileBufs);
-        if (!imageFile) {
-          error = 'File binary data cannot be null';
-          console.error(error);
-          return {
-            data: {},
-            error,
-          };
-        } else if (!info.filename || !info.mimeType) {
-          error = 'Missing file name or file type!';
-          console.error(error);
-          return {
-            data: {},
-            error,
-          };
-        } else {
-          // 2. Update image
-          const { data, error: storageError } = await supabase.storage
-            .from('room-images')
-            .upload(info.filename, imageFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
-  
-          // 3. Send an error if the file could not be uploaded into Supabase
-          if (storageError) {
-            error = 'Could not upload image!';
-            console.error(storageError);
-            // await supabase.from('rooms').delete().eq('id', data.id);
-            // console.error(storageError);
-          } else {
-            fileName = name;
-            console.log("saved file");
-          }     
-        }
-    });
+      });
 
       console.log('busboy file end!!!');
+    });
+
+    req.busboy.on('close', async function() {
+      console.log('busboy finish start!!!');
+      // var dataFile = Buffer.concat(dataFileBufs);
+      if (!imageFile) {
+        error = 'File binary data cannot be null';
+        console.error(error);
+        return {
+          data: {},
+          error,
+        };
+      } else if (!info.filename || !info.mimeType) {
+        error = 'Missing file name or file type!';
+        console.error(error);
+        return {
+          data: {},
+          error,
+        };
+      } else {
+        // 2. Update image
+        const { data, error: storageError } = await supabase.storage
+          .from('room-images')
+          .upload(info.filename, imageFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
+
+        // 3. Send an error if the file could not be uploaded into Supabase
+        if (storageError) {
+          error = 'Could not upload image!';
+          console.error(storageError);
+          // await supabase.from('rooms').delete().eq('id', data.id);
+          // console.error(storageError);
+        } else {
+          fileName = name;
+          console.log("saved file");
+        }     
+      }
     });
       // memStream.end('!');      
 
