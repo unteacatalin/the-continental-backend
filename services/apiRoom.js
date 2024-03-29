@@ -188,7 +188,6 @@ exports.uploadImage = async function(req) {
 
       // fstream.on('close', async function () {
       // });      
-    });
     req.pipe(req.busboy);
     return {
       data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${fileName}`},
