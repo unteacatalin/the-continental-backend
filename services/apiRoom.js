@@ -119,7 +119,7 @@ exports.uploadImage = async function(req) {
     let imageFile = null;
     let name = '';
     let info = {};
-    req.busboy.on('file', async function (name, file, info) {
+    req.busboy.on('file', function (name, file, info) {
       // 1. Stream the file in a temp folder
       // console.log({name, file, info});
       // console.log("received file");
@@ -145,14 +145,12 @@ exports.uploadImage = async function(req) {
         } else {
           imageFile = Buffer.concat([imageFile, data]);
         }
-        console.log('busboy finish end!!!');
+        console.log('busboy file end!!!');
       });
-
-      console.log('busboy file end!!!');
     });
 
     req.busboy.on('close', async function() {
-      console.log('busboy finish start!!!');
+      console.log('busboy close start!!!');
       // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
         error = 'File binary data cannot be null';
@@ -185,6 +183,7 @@ exports.uploadImage = async function(req) {
           console.log("saved file");
         }     
       }
+      console.log('busboy close end!!!');
     });
       // memStream.end('!');      
 
