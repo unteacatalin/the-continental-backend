@@ -136,6 +136,7 @@ exports.uploadImage = async function(req) {
       //     error: err,
       //   };
       // })
+      console.log('busboy file start!!!');
 
       name = name;
       info = info;
@@ -146,6 +147,8 @@ exports.uploadImage = async function(req) {
           imageFile = Buffer.concat([imageFile, data]);
         }
       });
+
+      console.log('busboy file end!!!');
     });
       // memStream.on('data', function(chunk) {
 	    //   // dataFileBufs.push(chunk);
@@ -158,6 +161,7 @@ exports.uploadImage = async function(req) {
 
       // memStream.on('end', async function() {
     req.busboy.on('finish', async function() {
+        console.log('busboy finish start!!!');
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!imageFile) {
           error = 'File binary data cannot be null';
@@ -190,6 +194,7 @@ exports.uploadImage = async function(req) {
             console.log("saved file");
           }     
         }
+        console.log('busboy finish end!!!');
     });
       // memStream.end('!');      
 
