@@ -117,8 +117,6 @@ exports.uploadImage = async function(req) {
   if (req.busboy) {
     console.log("I'm busboy!!!");
     let imageFile = null;
-    let name = '';
-    let info = {};
     req.busboy.on('file', async function (name, file, info) {
       // 1. Stream the file in a temp folder
       // console.log({name, file, info});
@@ -137,8 +135,6 @@ exports.uploadImage = async function(req) {
       //   };
       // })
       
-      name = name;
-      info = info;
       file.on('data', (data) => {
         console.log('busboy file start!!!');
         if (imageFile === null) {
