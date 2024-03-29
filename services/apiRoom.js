@@ -157,7 +157,7 @@ exports.uploadImage = async function(req) {
       // memStream.write(file?.data?.image);
 
       // memStream.on('end', async function() {
-    req.busboy.on('fimish', async function() {
+    req.busboy.on('finish', async function() {
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!info.filename || !info.mimeType) {
           error = 'Missing file name or file type!';
