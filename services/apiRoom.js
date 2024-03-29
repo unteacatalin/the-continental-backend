@@ -1,8 +1,8 @@
 const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
-const fs = require('fs');
-const MemoryStream = require('memorystream');
+// const fs = require('fs');
+// const MemoryStream = require('memorystream');
 const { Buffer } = require('node:buffer');
 
 exports.getRooms = async function (req) {
@@ -159,7 +159,14 @@ exports.uploadImage = async function(req) {
       // memStream.on('end', async function() {
     req.busboy.on('finish', async function() {
         // var dataFile = Buffer.concat(dataFileBufs);
-        if (!info.filename || !info.mimeType) {
+        if (!imageFile) {
+          error = 'File binary data cannot be null';
+          console.error(error);
+          return {
+            data: {},
+            error,
+          };
+        } else if (!info.filename || !info.mimeType) {
           error = 'Missing file name or file type!';
           console.error(error);
           return {
@@ -183,7 +190,7 @@ exports.uploadImage = async function(req) {
             console.log("saved file");
           }     
         }
-      });
+    });
       // memStream.end('!');      
 
       // fstream.on('close', async function () {
