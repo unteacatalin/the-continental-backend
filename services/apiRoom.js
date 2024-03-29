@@ -136,20 +136,18 @@ exports.uploadImage = async function(req) {
       //     error: err,
       //   };
       // })
-      console.log('busboy file start!!!');
-
+      
       name = name;
       info = info;
       file.on('data', (data) => {
+        console.log('busboy file start!!!');
         if (imageFile === null) {
           imageFile = data;
         } else {
           imageFile = Buffer.concat([imageFile, data]);
         }
-      });
-
-      console.log('busboy file end!!!');
-    }).on('close', async function() {
+        console.log('busboy finish end!!!');
+      }).on('close', async function() {
         console.log('busboy finish start!!!');
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!imageFile) {
@@ -183,7 +181,9 @@ exports.uploadImage = async function(req) {
             console.log("saved file");
           }     
         }
-        console.log('busboy finish end!!!');
+    });
+
+      console.log('busboy file end!!!');
     });
       // memStream.end('!');      
 
