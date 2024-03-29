@@ -116,34 +116,48 @@ exports.uploadImage = async function(req) {
   console.log("before busboy!!!");
   if (req.busboy) {
     console.log("I'm busboy!!!");
+    let imageFile = null;
+    let name = '';
+    let info = {};
     req.busboy.on('file', async function (name, file, info) {
       // 1. Stream the file in a temp folder
-      console.log({name, file, info});
-      console.log("received file");
-      var memStream = new MemoryStream();
+      // console.log({name, file, info});
+      // console.log("received file");
+      // var memStream = new MemoryStream();
       // var fstream = fs.createWriteStream('./public/files/temp/' + name);
       // file.pipe(fstream);
       // var dataFileBufs = [];
 
-      let dataFile = '';
-      memStream.on('error', function(err) {
-        console.error(err);
-        return {
-          data: {},
-          error: err,
-        };
-      })
+      // let dataFile = '';
+      // memStream.on('error', function(err) {
+      //   console.error(err);
+      //   return {
+      //     data: {},
+      //     error: err,
+      //   };
+      // })
 
-      memStream.on('data', function(chunk) {
-	      // dataFileBufs.push(chunk);
-        dataFile += chunk.toString();
+      name = name;
+      info = info;
+      file.on('data', (data) => {
+        if (imageFile === null) {
+          imageFile = data;
+        } else {
+          imageFile = Buffer.concat([imageFile, data]);
+        }
       });
+    });
+      // memStream.on('data', function(chunk) {
+	    //   // dataFileBufs.push(chunk);
+      //   dataFile += chunk.toString();
+      // });
 
       // memStream.write(Buffer.from(file, 'base64'));
-      console.log({file: file?.pipe()});
+      // console.log({file: file?.pipe()});
       // memStream.write(file?.data?.image);
 
-      memStream.on('end', async function() {
+      // memStream.on('end', async function() {
+    req.busboy.on('fimish', async function() {
         // var dataFile = Buffer.concat(dataFileBufs);
         if (!info.filename || !info.mimeType) {
           error = 'Missing file name or file type!';
@@ -156,7 +170,7 @@ exports.uploadImage = async function(req) {
           // 2. Update image
           const { data, error: storageError } = await supabase.storage
             .from('room-images')
-            .upload(info.filename, dataFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
+            .upload(info.filename, imageFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
   
           // 3. Send an error if the file could not be uploaded into Supabase
           if (storageError) {
@@ -170,7 +184,7 @@ exports.uploadImage = async function(req) {
           }     
         }
       });
-      memStream.end('!');      
+      // memStream.end('!');      
 
       // fstream.on('close', async function () {
       // });      
