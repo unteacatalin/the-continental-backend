@@ -112,32 +112,16 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-exports.uploadImage = async function(req) {
+const parseFile = function(req) {
   const bb = busboy({ headers: req.headers });
-  let fileName, error;
+  let error = '';
+  let imageFile = null;
+  let name = '';
+  let info = {};
   console.log("before busboy!!!");
   if (bb) {
     console.log("I'm busboy!!!");
-    let imageFile = null;
-    let name = '';
-    let info = {};
     bb.on('file', function (name, file, info) {
-      // 1. Stream the file in a temp folder
-      // console.log({name, file, info});
-      // console.log("received file");
-      // var memStream = new MemoryStream();
-      // var fstream = fs.createWriteStream('./public/files/temp/' + name);
-      // file.pipe(fstream);
-      // var dataFileBufs = [];
-
-      // let dataFile = '';
-      // memStream.on('error', function(err) {
-      //   console.error(err);
-      //   return {
-      //     data: {},
-      //     error: err,
-      //   };
-      // })
       name = name;
       info = info;
       file.on('data', (data) => {
@@ -151,7 +135,7 @@ exports.uploadImage = async function(req) {
       });
     });
 
-    bb.on('close', async function() {
+    bb.on('close', function() {
       console.log('busboy close start!!!');
       // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
@@ -168,35 +152,46 @@ exports.uploadImage = async function(req) {
           data: {},
           error,
         };
-      } else {
-        // 2. Update image
-        const { data, error: storageError } = await supabase.storage
-          .from('room-images')
-          .upload(info.filename, imageFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
-
-        // 3. Send an error if the file could not be uploaded into Supabase
-        if (storageError) {
-          error = 'Could not upload image!';
-          console.error(storageError);
-          // await supabase.from('rooms').delete().eq('id', data.id);
-          // console.error(storageError);
-        } else {
-          fileName = name;
-          console.log("saved file");
-        }     
       }
       console.log('busboy close end!!!');
-    });
-      // memStream.end('!');      
-
-      // fstream.on('close', async function () {
-      // });      
+    });    
     req.pipe(bb);
     return {
-      data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${fileName}`},
+      data: {imageFile, info, name},
       error,
     };
+  } else {
+    error = 'Missing file';
   }
   
-  return { data: {imageName: ''}, error }
+  return { data: {}, error }
 };
+
+exports.uploadImage = async function(req) { 
+  const {data: imageData, error: errorImage} = parseFile(req);
+  const imageFile = imageData?.imageFile;
+  const info = imageData?.info;
+  const name = imageData?.name;
+
+  let error = '';
+
+  if (errorImage) {
+    return { data: {imageName: ''}, error: errorImage }
+  }
+
+  // 2. Update image
+  const { data, error: storageError } = await supabase.storage
+  .from('room-images')
+  .upload(info.filename, imageFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
+
+  // 3. Send an error if the file could not be uploaded into Supabase
+  if (storageError) {
+    error = 'Could not upload image!';
+    console.error(storageError);
+    return { data: {imageName: ''}, error }
+    // await supabase.from('rooms').delete().eq('id', data.id);
+    // console.error(storageError);
+  }
+
+  return { data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${name}`}, error }
+}
