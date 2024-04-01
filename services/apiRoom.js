@@ -135,7 +135,7 @@ const parseFile = function(req) {
       });
     });
 
-    bb.on('end', function() {
+    bb.on('finish', function() {
       console.log('busboy close start!!!');
       // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
