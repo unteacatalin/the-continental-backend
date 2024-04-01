@@ -4,6 +4,7 @@ const APIFeatures = require('../utils/apiFeatures');
 // const fs = require('fs');
 // const MemoryStream = require('memorystream');
 const { Buffer } = require('node:buffer');
+const busboy = require('busboy');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -112,14 +113,15 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 };
 
 exports.uploadImage = async function(req) {
+  const bb = busboy({ headers: req.headers });
   let fileName, error;
   console.log("before busboy!!!");
-  if (req.busboy) {
+  if (bb) {
     console.log("I'm busboy!!!");
     let imageFile = null;
     let name = '';
     let info = {};
-    req.busboy.on('file', function (name, file, info) {
+    bb.on('file', function (name, file, info) {
       // 1. Stream the file in a temp folder
       // console.log({name, file, info});
       // console.log("received file");
@@ -149,7 +151,7 @@ exports.uploadImage = async function(req) {
       });
     });
 
-    req.busboy.on('close', async function() {
+    bb.on('close', async function() {
       console.log('busboy close start!!!');
       // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
@@ -189,7 +191,7 @@ exports.uploadImage = async function(req) {
 
       // fstream.on('close', async function () {
       // });      
-    req.pipe(req.busboy);
+    req.pipe(bb);
     return {
       data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${fileName}`},
       error,

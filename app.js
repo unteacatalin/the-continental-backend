@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
 // const fileUpload = require('express-fileupload');
-const busboy = require('connect-busboy');
+// const busboy = require('connect-busboy');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -72,12 +72,12 @@ app.use(
   }),
 );
 
-app.use(busboy({
-  highWaterMark: 1 * 1024 * 1024,
-  limits: {
-    fileSize: 2 * 1024 * 1024,
-  }  
-}));
+// app.use(busboy({
+//   highWaterMark: 1 * 1024 * 1024,
+//   limits: {
+//     fileSize: 2 * 1024 * 1024,
+//   }  
+// }));
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
