@@ -133,9 +133,7 @@ const parseFile = function(req) {
         }
         console.log('busboy file end!!!');
       });
-    });
-
-    bb.on('close', function() {
+    }).on('close', function() {
       console.log('busboy close start!!!');
       // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
