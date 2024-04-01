@@ -156,15 +156,18 @@ const parseFile = function(req) {
       console.log('busboy close end!!!');
     });    
     req.pipe(bb);
-    return {
-      data: {imageFile, info, name},
-      error,
-    };
   } else {
     error = 'Missing file';
+    return {
+      data: {},
+      error,
+    };
   }
   
-  return { data: {}, error }
+  return {
+    data: {imageFile, info, name},
+    error,
+  };
 };
 
 exports.uploadImage = async function(req) { 
