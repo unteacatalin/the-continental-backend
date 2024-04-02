@@ -132,7 +132,7 @@ const parseFile = function(req) {
         }
         console.log('File [' + name + '] got ' + data.length + ' bytes');
       });
-      file.on('end', () => {
+      file.on('close', () => {
         console.log('File [' + name + '] finished');
       });
     });
@@ -176,6 +176,8 @@ exports.uploadImage = async function(req) {
   const imageFile = imageData?.imageFile;
   const info = imageData?.info;
   const name = imageData?.name;
+
+  console.log({uploadImage: name});
 
   let error = '';
 
