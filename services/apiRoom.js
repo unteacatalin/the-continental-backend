@@ -125,18 +125,20 @@ const parseFile = function(req) {
       name = name;
       info = info;
       file.on('data', (data) => {
-        console.log('busboy file start!!!');
         if (imageFile === null) {
           imageFile = data;
         } else {
           imageFile = Buffer.concat([imageFile, data]);
         }
-        console.log('busboy file end!!!');
+        console.log('File [' + name + '] got ' + data.length + ' bytes');
+      });
+      file.on('end', () => {
+        console.log('File [' + name + '] finished');
       });
     });
 
-    bb.on('finish', function() {
-      console.log('busboy close start!!!');
+    bb.on('close', () => {
+      console.log('Done parsing form!');
       // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
         error = 'File binary data cannot be null';
@@ -153,7 +155,6 @@ const parseFile = function(req) {
           error,
         };
       }
-      console.log('busboy close end!!!');
     });    
     req.pipe(bb);
   } else {
