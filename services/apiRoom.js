@@ -139,35 +139,37 @@ const parseFile = function(req) {
 
     bb.on('close', () => {
       console.log('Done parsing form!');
-      // var dataFile = Buffer.concat(dataFileBufs);
       if (!imageFile) {
         error = 'File binary data cannot be null';
         console.error(error);
-        // return {
-        //   data: {},
-        //   error,
-        // };
+        return {
+          data: {},
+          error,
+        };
       } else if (!info.filename || !info.mimeType) {
         error = 'Missing file name or file type!';
         console.error(error);
-        // return {
-        //   data: {},
-        //   error,
-        // };
+        return {
+          data: {},
+          error,
+        };
       }
+      return {
+        data: {imageFile, info, name},
+        error,
+      };    
     });    
     req.pipe(bb);
   } else {
     error = 'Missing file';
-    // return {
-    //   data: {},
-    //   error,
-    // };
+    return {
+      data: {},
+      error,
+    };
   }
-  
   return {
-    data: {imageFile, info, name},
-    error,
+    data: {},
+    error: 'unknow error',
   };
 };
 
