@@ -176,7 +176,7 @@ const parseFile = function(req) {
 };
 
 exports.uploadImage = async function(req) { 
-  const {data: imageData, error: errorImage} = await parseFile(req);
+  const {data: imageData, error: errorImage} = parseFile(req);
   const imageFile = imageData?.imageFile;
   const info = imageData?.info;
   const name = imageData?.name;
