@@ -112,7 +112,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-const parseFile = function(req) {
+const parseFile = async function(req) {
   const bb = busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
@@ -121,7 +121,7 @@ const parseFile = function(req) {
   console.log("before busboy!!!");
   if (bb) {
     console.log("I'm busboy!!!");
-    bb.on('file', function (name, file, info) {
+    await bb.on('file', function (name, file, info) {
       name = name;
       info = info;
       file.on('data', (data) => {
@@ -137,7 +137,7 @@ const parseFile = function(req) {
       });
     });
 
-    bb.on('close', () => {
+    await bb.on('close', () => {
       console.log('Done parsing form!');
       if (!imageFile) {
         error = 'File binary data cannot be null';
@@ -174,7 +174,7 @@ const parseFile = function(req) {
 };
 
 exports.uploadImage = async function(req) { 
-  const {data: imageData, error: errorImage} = parseFile(req);
+  const {data: imageData, error: errorImage} = await parseFile(req);
   const imageFile = imageData?.imageFile;
   const info = imageData?.info;
   const name = imageData?.name;
