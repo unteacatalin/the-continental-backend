@@ -112,7 +112,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-const parseFile = async function(req) {
+const parseFile = function(req) {
   const bb = busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
@@ -121,7 +121,7 @@ const parseFile = async function(req) {
   console.log("before busboy!!!");
   if (bb) {
     console.log("I'm busboy!!!");
-    await bb.on('file', function (name, file, info) {
+    bb.on('file', function (name, file, info) {
       name = name;
       info = info;
       file.on('data', (data) => {
@@ -137,27 +137,29 @@ const parseFile = async function(req) {
       });
     });
 
-    await bb.on('close', () => {
-      console.log('Done parsing form!');
-      if (!imageFile) {
-        error = 'File binary data cannot be null';
-        console.error(error);
+    bb.on('close', () => {
+      Promise.all(imageFile).then((imageFile, name, info) => {
+        console.log('Done parsing form!');
+        if (!imageFile) {
+          error = 'File binary data cannot be null';
+          console.error(error);
+          return {
+            data: {},
+            error,
+          };
+        } else if (!info.filename || !info.mimeType) {
+          error = 'Missing file name or file type!';
+          console.error(error);
+          return {
+            data: {},
+            error,
+          };
+        }
         return {
-          data: {},
+          data: {imageFile, info, name},
           error,
         };
-      } else if (!info.filename || !info.mimeType) {
-        error = 'Missing file name or file type!';
-        console.error(error);
-        return {
-          data: {},
-          error,
-        };
-      }
-      return {
-        data: {imageFile, info, name},
-        error,
-      };    
+      });
     });    
     req.pipe(bb);
   } else {
