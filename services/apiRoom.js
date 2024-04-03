@@ -112,7 +112,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-const parseFile = function(req) {
+const parseFile = async function(req) {
   const bb = busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
@@ -137,29 +137,28 @@ const parseFile = function(req) {
       });
     });
 
-    bb.on('close', () => {
-      Promise.all(imageFile).then((imageFile, name, info) => {
-        console.log('Done parsing form!');
-        if (!imageFile) {
-          error = 'File binary data cannot be null';
-          console.error(error);
-          return {
-            data: {},
-            error,
-          };
-        } else if (!info.filename || !info.mimeType) {
-          error = 'Missing file name or file type!';
-          console.error(error);
-          return {
-            data: {},
-            error,
-          };
-        }
+    bb.on('close', async () => {
+      var image = await Promise.all(imageFile);
+      console.log('Done parsing form!');
+      if (!imageFile) {
+        error = 'File binary data cannot be null';
+        console.error(error);
         return {
-          data: {imageFile, info, name},
+          data: {},
           error,
         };
-      });
+      } else if (!info.filename || !info.mimeType) {
+        error = 'Missing file name or file type!';
+        console.error(error);
+        return {
+          data: {},
+          error,
+        };
+      }
+      return {
+        data: {imageFile: image, info, name},
+        error,
+      };
     });    
     req.pipe(bb);
   } else {
@@ -176,7 +175,7 @@ const parseFile = function(req) {
 };
 
 exports.uploadImage = async function(req) { 
-  const {data: imageData, error: errorImage} = parseFile(req);
+  const {data: imageData, error: errorImage} = await parseFile(req);
   const imageFile = imageData?.imageFile;
   const info = imageData?.info;
   const name = imageData?.name;
