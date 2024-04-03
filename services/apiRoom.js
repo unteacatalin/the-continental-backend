@@ -180,7 +180,7 @@ exports.uploadImage = async function(req) {
   const info = imageData?.info;
   const name = imageData?.name;
 
-  console.log({uploadImage: data});
+  console.log({uploadImage: imageData});
 
   let error = '';
 
