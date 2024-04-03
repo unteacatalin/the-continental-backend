@@ -131,13 +131,13 @@ const parseFile = async function(req) {
           imageFile = Buffer.concat([imageFile, data]);
         }
         console.log('File [' + name + '] got ' + data.length + ' bytes');
-      }).on('close', () => {
+      }).on('end', () => {
         console.log('File [' + name + '] done!');
       });
     })
     req.pipe(bb);
 
-    bb.on('close', async () => {
+    bb.on('finish', async () => {
       var image = await Promise.all(imageFile);
       console.log('Done parsing form!');
       if (!image) {
