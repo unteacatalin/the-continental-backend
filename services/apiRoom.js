@@ -122,7 +122,7 @@ const parseFile = async function(req) {
   if (bb) {
     console.log("I'm busboy!!!");
 
-    bb.on('finish', async () => {
+    bb.on('close', async () => {
       var image = await Promise.all(imageFile);
       console.log('Done parsing form!');
       if (!image) {
@@ -146,7 +146,7 @@ const parseFile = async function(req) {
       };
     });      
 
-    bb.on('file', function (file, info) {
+    bb.on('file', function (name, file, info) {
       info = info;
       file.on('data', (data) => {
         if (imageFile === null) {
@@ -155,7 +155,7 @@ const parseFile = async function(req) {
           imageFile = Buffer.concat([imageFile, data]);
         }
         console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
-      }).on('end', () => {
+      }).on('close', () => {
         console.log('File [' + info?.filename + '] done!');
       });
     })
@@ -169,7 +169,7 @@ const parseFile = async function(req) {
   }
   return {
     data: {},
-    error: 'unknow error',
+    error: 'unknown error',
   };
 };
 
