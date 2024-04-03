@@ -130,9 +130,9 @@ const parseFile = async function(req) {
         } else {
           imageFile = Buffer.concat([imageFile, data]);
         }
-        console.log('File [' + name + '] got ' + data.length + ' bytes');
+        console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
       }).on('end', () => {
-        console.log('File [' + name + '] done!');
+        console.log('File [' + info?.filename + '] done!');
       });
     })
     req.pipe(bb);
