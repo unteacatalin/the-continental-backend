@@ -158,6 +158,7 @@ const parseFile = async function(req) {
       }).on('close', () => {
         console.log('File [' + info?.filename + '] done!');
       });
+      file.pipe(imageFile);
     })
     req.pipe(bb);
   } else {
