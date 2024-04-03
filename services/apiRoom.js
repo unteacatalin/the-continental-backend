@@ -131,11 +131,11 @@ const parseFile = async function(req) {
           imageFile = Buffer.concat([imageFile, data]);
         }
         console.log('File [' + name + '] got ' + data.length + ' bytes');
+      }).on('close', () => {
+        console.log('File [' + name + '] done!');
       });
-      file.on('close', () => {
-        console.log('File [' + name + '] finished');
-      });
-    });
+    })
+    req.pipe(bb);
 
     bb.on('close', async () => {
       var image = await Promise.all(imageFile);
@@ -156,11 +156,10 @@ const parseFile = async function(req) {
         };
       }
       return {
-        data: {imageFile: image, info, name},
+        data: {imageFile: image, info},
         error,
       };
     });    
-    req.pipe(bb);
   } else {
     error = 'Missing file';
     return {
@@ -177,8 +176,8 @@ const parseFile = async function(req) {
 exports.uploadImage = async function(req) { 
   const {data: imageData, error: errorImage} = await parseFile(req);
   const imageFile = imageData?.imageFile;
-  const info = imageData?.info;
-  const name = imageData?.name;
+  const name = imageData?.info?.filename;
+  const mime = imageData?.info?.mimeType;
 
   console.log({uploadImage: imageData});
 
@@ -191,7 +190,7 @@ exports.uploadImage = async function(req) {
   // 2. Update image
   const { data, error: storageError } = await supabase.storage
   .from('room-images')
-  .upload(info.filename, imageFile, { cacheControl: '3600', upsert: true, contentType: info.mimeType });
+  .upload(name, imageFile, { cacheControl: '3600', upsert: true, contentType: mime });
 
   // 3. Send an error if the file could not be uploaded into Supabase
   if (storageError) {
