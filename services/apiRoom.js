@@ -140,7 +140,7 @@ const parseFile = async function(req) {
     bb.on('close', async () => {
       var image = await Promise.all(imageFile);
       console.log('Done parsing form!');
-      if (!imageFile) {
+      if (!image) {
         error = 'File binary data cannot be null';
         console.error(error);
         return {
@@ -180,7 +180,7 @@ exports.uploadImage = async function(req) {
   const info = imageData?.info;
   const name = imageData?.name;
 
-  console.log({uploadImage: name});
+  console.log({uploadImage: data});
 
   let error = '';
 
