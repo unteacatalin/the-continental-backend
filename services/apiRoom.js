@@ -125,7 +125,7 @@ const parseFile = async function(req) {
     // const workQueue = new PQueue({ concurrency: 1 });
 
     async function handleError(fn) {
-      workQueue.add(async () => {
+      // workQueue.add(async () => {
         try {
           await fn();
         } catch (e) {
@@ -133,7 +133,7 @@ const parseFile = async function(req) {
           // workQueue.pause();
           next(e);
         }
-      });
+      // });
     }
 
     bb.on('close', async () => {
