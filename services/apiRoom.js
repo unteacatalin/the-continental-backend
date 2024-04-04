@@ -5,7 +5,7 @@ const APIFeatures = require('../utils/apiFeatures');
 // const MemoryStream = require('memorystream');
 const { Buffer } = require('node:buffer');
 const busboy = require('busboy');
-const PQueue = require("p-queue");
+// const PQueue = require('p-queue');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -122,7 +122,7 @@ const parseFile = async function(req) {
 
   if (bb) {
     console.log("I'm busboy!!!");
-    const workQueue = new PQueue({ concurrency: 1 });
+    // const workQueue = new PQueue({ concurrency: 1 });
 
     async function handleError(fn) {
       workQueue.add(async () => {
@@ -130,7 +130,7 @@ const parseFile = async function(req) {
           await fn();
         } catch (e) {
           req.unpipe(bb);
-          workQueue.pause();
+          // workQueue.pause();
           next(e);
         }
       });
