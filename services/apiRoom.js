@@ -5,6 +5,7 @@ const APIFeatures = require('../utils/apiFeatures');
 // const MemoryStream = require('memorystream');
 const { Buffer } = require('node:buffer');
 const busboy = require('busboy');
+const PQueue = require("p-queue");
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -113,7 +114,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 };
 
 const parseFile = async function(req) {
-  const bb = new busboy({ headers: req.headers });
+  const bb = busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
   let info = {};
@@ -121,42 +122,59 @@ const parseFile = async function(req) {
 
   if (bb) {
     console.log("I'm busboy!!!");
+    const workQueue = new PQueue({ concurrency: 1 });
+
+    async function handleError(fn) {
+      workQueue.add(async () => {
+        try {
+          await fn();
+        } catch (e) {
+          req.unpipe(bb);
+          workQueue.pause();
+          next(e);
+        }
+      });
+    }
 
     bb.on('close', async () => {
-      var image = await Promise.all(imageFile);
-      console.log('Done parsing form!');
-      if (!image) {
-        error = 'File binary data cannot be null';
-        console.error(error);
+      handleError(async () => {
+        var image = await Promise.all(imageFile);
+        console.log('Done parsing form!');
+        if (!image) {
+          error = 'File binary data cannot be null';
+          console.error(error);
+          return {
+            data: {},
+            error,
+          };
+        } else if (!info.filename || !info.mimeType) {
+          error = 'Missing file name or file type!';
+          console.error(error);
+          return {
+            data: {},
+            error,
+          };
+        }
         return {
-          data: {},
+          data: {imageFile: image, info},
           error,
         };
-      } else if (!info.filename || !info.mimeType) {
-        error = 'Missing file name or file type!';
-        console.error(error);
-        return {
-          data: {},
-          error,
-        };
-      }
-      return {
-        data: {imageFile: image, info},
-        error,
-      };
+      });
     });      
 
     bb.on('file', function (name, file, info) {
-      info = info;
-      file.on('data', (data) => {
-        if (imageFile === null) {
-          imageFile = data;
-        } else {
-          imageFile = Buffer.concat([imageFile, data]);
-        }
-        console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
-      }).on('close', () => {
-        console.log('File [' + info?.filename + '] done!');
+      handleError(() => {
+        info = info;
+        file.on('data', (data) => {
+          if (imageFile === null) {
+            imageFile = data;
+          } else {
+            imageFile = Buffer.concat([imageFile, data]);
+          }
+          console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
+        }).on('close', () => {
+          console.log('File [' + info?.filename + '] done!');
+        });
       });
     })
     req.pipe(bb);
