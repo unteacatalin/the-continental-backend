@@ -113,7 +113,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 };
 
 const parseFile = async function(req) {
-  const bb = busboy({ headers: req.headers });
+  const bb = new busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
   let info = {};
@@ -158,7 +158,6 @@ const parseFile = async function(req) {
       }).on('close', () => {
         console.log('File [' + info?.filename + '] done!');
       });
-      file.pipe(imageFile);
     })
     req.pipe(bb);
   } else {
