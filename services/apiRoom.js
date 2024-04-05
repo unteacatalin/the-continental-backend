@@ -162,8 +162,8 @@ const parseFile = async function(req) {
       });
     });      
 
-    bb.on('file', function (name, file, info) {
-      handleError(() => {
+    bb.on('file', async function (name, file, info) {
+      handleError(async () => {
         info = info;
         file.on('data', async (data) => {
           var dataFile = await Promise.all(data);
