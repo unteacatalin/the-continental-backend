@@ -165,6 +165,7 @@ const parseFile = async function(req) {
     bb.on('file', function (name, file, info) {
       handleError(() => {
         info = info;
+        console.log({file});
         file.on('data', (data) => {
           if (imageFile === null) {
             imageFile = data;
