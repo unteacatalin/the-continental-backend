@@ -165,14 +165,15 @@ const parseFile = async function(req) {
     bb.on('file', function (name, file, info) {
       handleError(() => {
         info = info;
-        file.on('data', (data) => {
-          console.log({data});
+        file.on('data', async (data) => {
+          var dataFile = await Promise.all(data);
           if (imageFile === null) {
-            imageFile = data;
+            imageFile = dataFile;
           } else {
-            imageFile = Buffer.concat([imageFile, data]);
+            imageFile = Buffer.concat([imageFile, dataFile]);
           }
           console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
+          console.log({imageFile});
         }).on('close', () => {
           console.log('File [' + info?.filename + '] done!');
         });
