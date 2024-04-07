@@ -162,15 +162,14 @@ const parseFile = async function(req) {
       });
     });      
 
-    bb.on('file', async function (name, file, info) {
-      handleError(async () => {
+    bb.on('file', function (name, file, info) {
+      handleError(() => {
         info = info;
-        file.on('data', async (data) => {
-          var dataFile = await Promise.all(data);
+        file.on('data', (data) => {
           if (imageFile === null) {
             imageFile = dataFile;
           } else {
-            imageFile = Buffer.concat([imageFile, dataFile]);
+            imageFile = Buffer.concat([imageFile, data]);
           }
           console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
           console.log({imageFile});
