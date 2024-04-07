@@ -131,7 +131,12 @@ const parseFile = async function(req) {
         } catch (e) {
           req.unpipe(bb);
           // workQueue.pause();
-          next(e);
+          console.error(e);
+          return res.status(400).json({
+            status: 'error',
+            data: { },
+            error: 'unknown error',
+          });
         }
       // });
     }
