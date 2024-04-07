@@ -133,7 +133,7 @@ exports.uploadRoomImage = catchAsync(async (req, res, next) => {
     return res.status(400).json({
       status: 'error',
       data: { },
-      error: 'Image could not be uploaded'
+      error
     });
   }
 

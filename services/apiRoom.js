@@ -197,7 +197,8 @@ const parseFile = async function(req) {
   };
 };
 
-exports.uploadImage = async function(req) { 
+exports.uploadImage = async function(req) {
+  console.log('AICI ajung??!?!?!?!?');
   const {data: imageData, error: errorImage} = await parseFile(req);
   const imageFile = imageData?.imageFile;
   const name = imageData?.info?.filename;
@@ -205,7 +206,7 @@ exports.uploadImage = async function(req) {
 
   console.log({uploadImage: imageData});
 
-  let error = '';
+  let error = errorImage;
 
   if (errorImage) {
     return { data: {imageName: ''}, error: errorImage }
