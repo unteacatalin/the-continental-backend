@@ -167,7 +167,7 @@ const parseFile = async function(req) {
         info = info;
         file.on('data', (data) => {
           if (imageFile === null) {
-            imageFile = dataFile;
+            imageFile = data;
           } else {
             imageFile = Buffer.concat([imageFile, data]);
           }
