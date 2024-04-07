@@ -114,6 +114,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 };
 
 const parseFile = async function(req) {
+  console.log({headers: req?.headers});
   const bb = busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
