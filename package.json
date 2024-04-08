@@ -15,8 +15,8 @@
   "author": "Catalin Marius Untea",
   "license": "ISC",
   "dependencies": {
+    "@fastify/busboy": "^2.1.1",
     "@supabase/supabase-js": "^2.39.0",
-    "busboy": "^1.6.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
