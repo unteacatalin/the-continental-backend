@@ -114,7 +114,6 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 };
 
 const parseFile = async function(req) {
-  console.log({headers: req?.headers});
   const bb = busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
@@ -159,7 +158,7 @@ const parseFile = async function(req) {
       // });
     }
 
-    bb.on('finish', () => {
+    bb.on('close', () => {
       console.log('AJUNG AICI???', imageFile);
       // handleAsyncError(async () => {
       //   console.log('Done parsing form!');
@@ -196,8 +195,7 @@ const parseFile = async function(req) {
             imageFile = Buffer.concat([imageFile, data]);
           }
           console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
-          console.log({imageFile});
-        }).on('close', () => {
+        }).on('finish', () => {
           console.log('File [' + info?.filename + '] done!');
         });
       });
@@ -207,19 +205,21 @@ const parseFile = async function(req) {
   } else {
     error = 'Missing file';
     return {
+      status: 'error',
       data: {},
       error,
     };
   }
   
   return {
+    status: 'error',
     data: {},
-    error: 'unknown error',
+    error: 'no file to upload',
   };
 };
 
 exports.uploadImage = async function(req) {
-  const {data: imageData, error: errorImage} = await parseFile(req);
+  const {data: imageData, error: errorImage} = parseFile(req);
   const imageFile = imageData?.imageFile;
   const name = imageData?.info?.filename;
   const mime = imageData?.info?.mimeType;
