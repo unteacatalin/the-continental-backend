@@ -113,7 +113,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-const parseFile = async function(req) {
+const parseFile = function(req) {
   const bb = new Busboy({ headers: req.headers });
   let error = '';
   let imageFile = null;
@@ -168,6 +168,7 @@ const parseFile = async function(req) {
           error = 'File binary data cannot be null';
           console.error(error);
           return {
+            status: 'error',
             data: {},
             error,
           };
@@ -175,11 +176,13 @@ const parseFile = async function(req) {
           error = 'Missing file name or file type!';
           console.error(error);
           return {
+            status: 'error',
             data: {},
             error,
           };
         }
         return {
+          status: 'success',
           data: {imageFile, fileName, mimeType},
           error,
         };
