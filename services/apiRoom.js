@@ -159,7 +159,7 @@ const parseFile = async function(req) {
       // });
     }
 
-    bb.on('close', () => {
+    bb.on('finish', () => {
       console.log('AJUNG AICI???', imageFile);
       // handleAsyncError(async () => {
       //   console.log('Done parsing form!');
