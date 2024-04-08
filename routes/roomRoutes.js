@@ -1,4 +1,7 @@
 const express = require('express');
+const fastify = require('fastify')();
+
+fastify.register(require('@fastify/multipart'))
 
 const {
   getAllRooms,
@@ -14,7 +17,7 @@ router.use(protect);
 
 router.route('/').get(getAllRooms).post(createEditRoom);
 
-router.post('/image', uploadRoomImage);
+fasty.post('/image', uploadRoomImage);
 router.route('/:id').patch(createEditRoom).delete(deleteRoom);
 //   .post(protect, restrictTo('admin', 'lead-guide'), createTour);
 

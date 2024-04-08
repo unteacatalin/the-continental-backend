@@ -113,129 +113,141 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-const parseFile = function(req) {
-  const bb = new Busboy({ headers: req.headers });
-  let error = '';
-  let imageFile = null;
-  let fileName;
-  let mimeType;
-  console.log("before busboy!!!");
+// const parseFile = function(req) {
+//   const bb = new Busboy({ headers: req.headers });
+//   let error = '';
+//   let imageFile = null;
+//   let fileName;
+//   let mimeType;
+//   console.log("before busboy!!!");
 
-  if (bb) {
-    console.log("I'm busboy!!!");
-    // const workQueue = new PQueue({ concurrency: 1 });
+//   if (bb) {
+//     console.log("I'm busboy!!!");
+//     // const workQueue = new PQueue({ concurrency: 1 });
 
-    // async function handleAsyncError(fn) {
-    //   // workQueue.add(async () => {
-    //     try {
-    //       await fn();
-    //     } catch (e) {
-    //       req.unpipe(bb);
-    //       // workQueue.pause();
-    //       console.error(e);
-    //       return res.status(400).json({
-    //         status: 'error',
-    //         data: { },
-    //         error: 'unknown error',
-    //       });
-    //     }
-    //   // });
-    // }
+//     // async function handleAsyncError(fn) {
+//     //   // workQueue.add(async () => {
+//     //     try {
+//     //       await fn();
+//     //     } catch (e) {
+//     //       req.unpipe(bb);
+//     //       // workQueue.pause();
+//     //       console.error(e);
+//     //       return res.status(400).json({
+//     //         status: 'error',
+//     //         data: { },
+//     //         error: 'unknown error',
+//     //       });
+//     //     }
+//     //   // });
+//     // }
 
-    // async function handleError(fn) {
-    //   // workQueue.add(async () => {
-    //     try {
-    //       fn();
-    //     } catch (e) {
-    //       req.unpipe(bb);
-    //       // workQueue.pause();
-    //       console.error(e);
-    //       return res.status(400).json({
-    //         status: 'error',
-    //         data: { },
-    //         error: 'unknown error',
-    //       });
-    //     }
-    //   // });
-    // }
+//     // async function handleError(fn) {
+//     //   // workQueue.add(async () => {
+//     //     try {
+//     //       fn();
+//     //     } catch (e) {
+//     //       req.unpipe(bb);
+//     //       // workQueue.pause();
+//     //       console.error(e);
+//     //       return res.status(400).json({
+//     //         status: 'error',
+//     //         data: { },
+//     //         error: 'unknown error',
+//     //       });
+//     //     }
+//     //   // });
+//     // }
 
-    bb.on('finish', () => {
-      // console.log('AJUNG AICI???', imageFile);
-      // handleAsyncError(async () => {
-        console.log('Done parsing form!');
-        // var image = await Promise.all(imageFile);
-        if (!imageFile) {
-          error = 'File binary data cannot be null';
-          console.error(error);
-          return {
-            status: 'error',
-            data: {},
-            error,
-          };
-        } else if (!fileName || !mimeType) {
-          error = 'Missing file name or file type!';
-          console.error(error);
-          return {
-            status: 'error',
-            data: {},
-            error,
-          };
-        }
-        return {
-          status: 'success',
-          data: {imageFile, fileName, mimeType},
-          error,
-        };
-      // });
-    });      
+//     bb.on('finish', () => {
+//       // console.log('AJUNG AICI???', imageFile);
+//       // handleAsyncError(async () => {
+//         console.log('Done parsing form!');
+//         // var image = await Promise.all(imageFile);
+//         if (!imageFile) {
+//           error = 'File binary data cannot be null';
+//           console.error(error);
+//           return {
+//             status: 'error',
+//             data: {},
+//             error,
+//           };
+//         } else if (!fileName || !mimeType) {
+//           error = 'Missing file name or file type!';
+//           console.error(error);
+//           return {
+//             status: 'error',
+//             data: {},
+//             error,
+//           };
+//         }
+//         return {
+//           status: 'success',
+//           data: {imageFile, fileName, mimeType},
+//           error,
+//         };
+//       // });
+//     });      
 
-    bb.on('file', function (fieldname, file, filename, encoding, mimetype) {
-      // handleError(() => {
-        fileName = filename;
-        mimeType = mimetype;
-        file.on('data', (data) => {
-          if (imageFile === null) {
-            imageFile = data;
-          } else {
-            imageFile = Buffer.concat([imageFile, data]);
-          }
-          console.log('File [' + filename + '] got ' + data.length + ' bytes');
-        }).on('end', () => {
-          console.log('File [' + filename + '] done!');
-        });
-      });
-    // })
+//     bb.on('file', function (fieldname, file, filename, encoding, mimetype) {
+//       // handleError(() => {
+//         fileName = filename;
+//         mimeType = mimetype;
+//         file.on('data', (data) => {
+//           if (imageFile === null) {
+//             imageFile = data;
+//           } else {
+//             imageFile = Buffer.concat([imageFile, data]);
+//           }
+//           console.log('File [' + filename + '] got ' + data.length + ' bytes');
+//         }).on('end', () => {
+//           console.log('File [' + filename + '] done!');
+//         });
+//       });
+//     // })
     
-    req.pipe(bb);
-  } else {
-    error = 'Missing file';
-    return {
-      status: 'error',
-      data: {},
-      error,
-    };
-  }
+//     req.pipe(bb);
+//   } else {
+//     error = 'Missing file';
+//     return {
+//       status: 'error',
+//       data: {},
+//       error,
+//     };
+//   }
   
+//   return {
+//     status: 'error',
+//     data: {},
+//     error: 'no file to upload',
+//   };
+// };
+
+const parseFile = async function(req) {
+  const data = await req.file();
+  const fileName = data.filename;
+  const mimeType = data.mimetype;
+  const buffer = await data.toBuffer();
+
   return {
-    status: 'error',
-    data: {},
-    error: 'no file to upload',
-  };
-};
+    data: {imageFile: buffer, fileName, mimeType},
+    error,  
+  }
+}
 
 exports.uploadImage = async function(req) {
-  const {data: imageData, error: errorImage} = parseFile(req);
-  const imageFile = imageData?.imageFile;
+  const {data: imageData} = await parseFile(req);
+  const imageFile = imageData?.buffer;
   const name = imageData?.fileName;
   const mime = imageData?.mimeType;
 
   console.log({uploadImage: imageData});
 
-  let error = errorImage;
+  // let error = errorImage;
 
-  if (errorImage) {
-    return { data: {imageName: ''}, error: errorImage }
-  }
+  // if (errorImage) {
+  //   return { data: {imageName: ''}, error: errorImage }
+  // }
 
   // 2. Update image
   const { data, error: storageError } = await supabase.storage
