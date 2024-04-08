@@ -199,9 +199,9 @@ const parseFile = function(req) {
           } else {
             imageFile = Buffer.concat([imageFile, data]);
           }
-          console.log('File [' + info?.filename + '] got ' + data.length + ' bytes');
+          console.log('File [' + filename + '] got ' + data.length + ' bytes');
         }).on('end', () => {
-          console.log('File [' + info?.filename + '] done!');
+          console.log('File [' + filename + '] done!');
         });
       });
     // })
