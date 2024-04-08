@@ -17,7 +17,7 @@ router.use(protect);
 
 router.route('/').get(getAllRooms).post(createEditRoom);
 
-fasty.post('/image', uploadRoomImage);
+fastify.post('/image', uploadRoomImage);
 router.route('/:id').patch(createEditRoom).delete(deleteRoom);
 //   .post(protect, restrictTo('admin', 'lead-guide'), createTour);
 
