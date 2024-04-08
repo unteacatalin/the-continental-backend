@@ -159,31 +159,31 @@ const parseFile = async function(req) {
       // });
     }
 
-    bb.on('close', async () => {
+    bb.on('close', () => {
       console.log('AJUNG AICI???', imageFile);
-      handleAsyncError(async () => {
-        var image = await Promise.all(imageFile);
-        console.log('Done parsing form!');
-        if (!image) {
-          error = 'File binary data cannot be null';
-          console.error(error);
-          return {
-            data: {},
-            error,
-          };
-        } else if (!info.filename || !info.mimeType) {
-          error = 'Missing file name or file type!';
-          console.error(error);
-          return {
-            data: {},
-            error,
-          };
-        }
-        return {
-          data: {imageFile: image, info},
-          error,
-        };
-      });
+      // handleAsyncError(async () => {
+      //   console.log('Done parsing form!');
+      //   var image = await Promise.all(imageFile);
+      //   if (!image) {
+      //     error = 'File binary data cannot be null';
+      //     console.error(error);
+      //     return {
+      //       data: {},
+      //       error,
+      //     };
+      //   } else if (!info.filename || !info.mimeType) {
+      //     error = 'Missing file name or file type!';
+      //     console.error(error);
+      //     return {
+      //       data: {},
+      //       error,
+      //     };
+      //   }
+      //   return {
+      //     data: {imageFile: image, info},
+      //     error,
+      //   };
+      // });
     });      
 
     bb.on('file', function (name, file, info) {
