@@ -125,7 +125,7 @@ const parseFile = async function(req) {
     console.log("I'm busboy!!!");
     // const workQueue = new PQueue({ concurrency: 1 });
 
-    async function handleError(fn) {
+    async function handleAsyncError(fn) {
       // workQueue.add(async () => {
         try {
           await fn();
@@ -142,8 +142,26 @@ const parseFile = async function(req) {
       // });
     }
 
+    async function handleError(fn) {
+      // workQueue.add(async () => {
+        try {
+          fn();
+        } catch (e) {
+          req.unpipe(bb);
+          // workQueue.pause();
+          console.error(e);
+          return res.status(400).json({
+            status: 'error',
+            data: { },
+            error: 'unknown error',
+          });
+        }
+      // });
+    }
+
     bb.on('close', async () => {
-      handleError(async () => {
+      console.log('AJUNG AICI???', imageFile);
+      handleAsyncError(async () => {
         var image = await Promise.all(imageFile);
         console.log('Done parsing form!');
         if (!image) {
@@ -184,6 +202,7 @@ const parseFile = async function(req) {
         });
       });
     })
+    
     req.pipe(bb);
   } else {
     error = 'Missing file';
@@ -192,6 +211,7 @@ const parseFile = async function(req) {
       error,
     };
   }
+  
   return {
     data: {},
     error: 'unknown error',
@@ -199,7 +219,6 @@ const parseFile = async function(req) {
 };
 
 exports.uploadImage = async function(req) {
-  console.log('AICI ajung??!?!?!?!?');
   const {data: imageData, error: errorImage} = await parseFile(req);
   const imageFile = imageData?.imageFile;
   const name = imageData?.info?.filename;
