@@ -221,7 +221,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 const parseFile = function(req) {
   console.log(req?.file);
   const buffer = req?.file?.buffer;
-  const fileName = req?.file?.filename;
+  const fileName = req?.file?.originalname;
   const mimeType = req?.file?.mimetype;
   let error = '';
 
