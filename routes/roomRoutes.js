@@ -1,4 +1,5 @@
 const express = require('express');
+const multer  = require('multer');
 
 const {
   getAllRooms,
@@ -7,7 +8,9 @@ const {
   uploadRoomImage
 } = require('../controllers/roomController');
 const { protect } = require('../controllers/authController');
-const { upload}  = require('./app');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const router = express.Router();
 

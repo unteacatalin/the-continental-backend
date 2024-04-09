@@ -8,16 +8,12 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
-const multer  = require('multer');
-const storage = multer.memoryStorage();
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const roomRouter = require('./routes/roomRoutes');
 const userRouter = require('./routes/userRoutes');
 const settingRouter = require('./routes/settingRoutes');
-
-exports.upload = multer({ storage: storage });
 
 const app = express();
 
