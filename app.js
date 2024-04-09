@@ -17,6 +17,8 @@ const roomRouter = require('./routes/roomRoutes');
 const userRouter = require('./routes/userRoutes');
 const settingRouter = require('./routes/settingRoutes');
 
+exports.upload = multer({ storage: storage });
+
 const app = express();
 
 app.enable('trust proxy');
@@ -128,8 +130,6 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(globalErrorHandler);
-
-exports.upload = multer({ storage: storage });
 
 module.exports = app;
 
