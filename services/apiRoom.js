@@ -241,7 +241,7 @@ exports.uploadImage = async function(req) {
     console.error(parseError);
     return { data: {imageName: ''}, error: parseError }
   }
-  const imageFile = imageData?.buffer;
+  const imageFile = imageData?.imageFile;
   const name = imageData?.fileName;
   const mime = imageData?.mimeType;
 
