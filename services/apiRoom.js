@@ -258,6 +258,8 @@ exports.uploadImage = async function(req) {
   .from('room-images')
   .upload(name, imageFile, { cacheControl: '3600', upsert: true, contentType: mime });
 
+  let error = '';
+
   // 3. Send an error if the file could not be uploaded into Supabase
   if (storageError) {
     error = 'Could not upload image!';
