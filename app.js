@@ -8,8 +8,8 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
-// const fileUpload = require('express-fileupload');
-// const busboy = require('connect-busboy');
+const multer  = require('multer');
+const storage = multer.memoryStorage();
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -129,4 +129,7 @@ app.all('*', (req, res, next) => {
 
 app.use(globalErrorHandler);
 
+exports.upload = multer({ storage: storage });
+
 module.exports = app;
+

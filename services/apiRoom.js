@@ -1,11 +1,6 @@
 const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
-// const fs = require('fs');
-// const MemoryStream = require('memorystream');
-// const { Buffer } = require('node:buffer');
-// const Busboy = require('@fastify/busboy');
-// const PQueue = require('p-queue');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -223,11 +218,15 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 //   };
 // };
 
-const parseFile = async function(req) {
-  const data = await req.file();
-  const fileName = data.filename;
-  const mimeType = data.mimetype;
-  const buffer = await data.toBuffer();
+const parseFile = function(req) {
+  const buffer = req?.file?.buffer;
+  const fileName = req?.file?.filename;
+  const mimeType = req?.file?.mimetype;
+  let error = '';
+
+  if (!buffer || !fileName || !mimeType) {
+    error = 'missing file'
+  }
 
   return {
     data: {imageFile: buffer, fileName, mimeType},
@@ -236,7 +235,11 @@ const parseFile = async function(req) {
 }
 
 exports.uploadImage = async function(req) {
-  const {data: imageData} = await parseFile(req);
+  const {data: imageData, error: parseError} = parseFile(req);
+  if (parseError) {
+    console.error(error);
+    return { data: {imageName: ''}, error: parseError }
+  }
   const imageFile = imageData?.buffer;
   const name = imageData?.fileName;
   const mime = imageData?.mimeType;
