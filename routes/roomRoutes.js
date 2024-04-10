@@ -10,7 +10,7 @@ const {
 const { protect } = require('../controllers/authController');
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({ storage, limits: { fileSize: 1048576 } });
 
 const router = express.Router();
 

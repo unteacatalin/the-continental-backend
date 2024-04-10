@@ -120,7 +120,6 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 };
 
 const parseFile = function(req) {
-  console.log(req?.file);
   const buffer = req?.file?.buffer;
   const fileName = req?.file?.originalname;
   const mimeType = req?.file?.mimetype;
@@ -148,7 +147,7 @@ exports.uploadImage = async function(req) {
   const mime = imageData?.mimeType;
   const fileHash = getHash(imageFile) ;
   const fileExt = path.extname(name);
-  const newFileName = fileHash + '.' + fileExt;
+  const newFileName = fileHash + fileExt;
 
   // 2. Update image
   const { data, error: storageError } = await supabase.storage
