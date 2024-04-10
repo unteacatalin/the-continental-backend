@@ -107,7 +107,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
     console.error(error);
   }
 
-  if (hasImagePath)
+  // if (hasImagePath)
     return { data: { room: Array.isArray(room) ? room[0] : room }, error };
 
   // const uploadFile = req.files.file;
