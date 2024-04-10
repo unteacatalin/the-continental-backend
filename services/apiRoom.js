@@ -1,6 +1,17 @@
 const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
+const crypto = require('crypto');
+const path = require('path');
+
+const getHash = ( content ) => {				
+  var hash = crypto.createHash('md5');
+  //passing the data to be hashed
+  data = hash.update(content, 'utf-8');
+  //Creating the hash in the required format
+  gen_hash= data.digest('hex');
+  return gen_hash;
+}
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms'), req.query)
@@ -108,116 +119,6 @@ exports.createEditRoom = async function ({ newRoom, id }) {
 
 };
 
-// const parseFile = function(req) {
-//   const bb = new Busboy({ headers: req.headers });
-//   let error = '';
-//   let imageFile = null;
-//   let fileName;
-//   let mimeType;
-//   console.log("before busboy!!!");
-
-//   if (bb) {
-//     console.log("I'm busboy!!!");
-//     // const workQueue = new PQueue({ concurrency: 1 });
-
-//     // async function handleAsyncError(fn) {
-//     //   // workQueue.add(async () => {
-//     //     try {
-//     //       await fn();
-//     //     } catch (e) {
-//     //       req.unpipe(bb);
-//     //       // workQueue.pause();
-//     //       console.error(e);
-//     //       return res.status(400).json({
-//     //         status: 'error',
-//     //         data: { },
-//     //         error: 'unknown error',
-//     //       });
-//     //     }
-//     //   // });
-//     // }
-
-//     // async function handleError(fn) {
-//     //   // workQueue.add(async () => {
-//     //     try {
-//     //       fn();
-//     //     } catch (e) {
-//     //       req.unpipe(bb);
-//     //       // workQueue.pause();
-//     //       console.error(e);
-//     //       return res.status(400).json({
-//     //         status: 'error',
-//     //         data: { },
-//     //         error: 'unknown error',
-//     //       });
-//     //     }
-//     //   // });
-//     // }
-
-//     bb.on('finish', () => {
-//       // console.log('AJUNG AICI???', imageFile);
-//       // handleAsyncError(async () => {
-//         console.log('Done parsing form!');
-//         // var image = await Promise.all(imageFile);
-//         if (!imageFile) {
-//           error = 'File binary data cannot be null';
-//           console.error(error);
-//           return {
-//             status: 'error',
-//             data: {},
-//             error,
-//           };
-//         } else if (!fileName || !mimeType) {
-//           error = 'Missing file name or file type!';
-//           console.error(error);
-//           return {
-//             status: 'error',
-//             data: {},
-//             error,
-//           };
-//         }
-//         return {
-//           status: 'success',
-//           data: {imageFile, fileName, mimeType},
-//           error,
-//         };
-//       // });
-//     });      
-
-//     bb.on('file', function (fieldname, file, filename, encoding, mimetype) {
-//       // handleError(() => {
-//         fileName = filename;
-//         mimeType = mimetype;
-//         file.on('data', (data) => {
-//           if (imageFile === null) {
-//             imageFile = data;
-//           } else {
-//             imageFile = Buffer.concat([imageFile, data]);
-//           }
-//           console.log('File [' + filename + '] got ' + data.length + ' bytes');
-//         }).on('end', () => {
-//           console.log('File [' + filename + '] done!');
-//         });
-//       });
-//     // })
-    
-//     req.pipe(bb);
-//   } else {
-//     error = 'Missing file';
-//     return {
-//       status: 'error',
-//       data: {},
-//       error,
-//     };
-//   }
-  
-//   return {
-//     status: 'error',
-//     data: {},
-//     error: 'no file to upload',
-//   };
-// };
-
 const parseFile = function(req) {
   console.log(req?.file);
   const buffer = req?.file?.buffer;
@@ -236,6 +137,7 @@ const parseFile = function(req) {
 }
 
 exports.uploadImage = async function(req) {
+  // Parse form data
   const {data: imageData, error: parseError} = parseFile(req);
   if (parseError) {
     console.error(parseError);
@@ -244,19 +146,14 @@ exports.uploadImage = async function(req) {
   const imageFile = imageData?.imageFile;
   const name = imageData?.fileName;
   const mime = imageData?.mimeType;
-
-  console.log({uploadImage: imageData});
-
-  // let error = errorImage;
-
-  // if (errorImage) {
-  //   return { data: {imageName: ''}, error: errorImage }
-  // }
+  const fileHash = getHash(imageFile) ;
+  const fileExt = path.extname(name);
+  const newFileName = fileHash + '.' + fileExt;
 
   // 2. Update image
   const { data, error: storageError } = await supabase.storage
   .from('room-images')
-  .upload(name, imageFile, { cacheControl: '3600', upsert: true, contentType: mime });
+  .upload(newFileName, imageFile, { cacheControl: '3600', upsert: true, contentType: mime });
 
   let error = '';
 
@@ -265,9 +162,8 @@ exports.uploadImage = async function(req) {
     error = 'Could not upload image!';
     console.error(storageError);
     return { data: {imageName: ''}, error }
-    // await supabase.from('rooms').delete().eq('id', data.id);
-    // console.error(storageError);
   }
 
-  return { data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${name}`}, error }
+  // 4. Return image url from supabase storage
+  return { data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${newFileName}`}, error }
 }
