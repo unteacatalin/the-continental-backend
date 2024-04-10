@@ -40,7 +40,7 @@ exports.deleteRoom = async function (id) {
 };
 
 const getImage = function (hasImage, newRoom) {
-  const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
+  // const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
 
   // const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
   //   '/',
@@ -48,14 +48,16 @@ const getImage = function (hasImage, newRoom) {
   // );
 
   const imagePath = hasImage
-    ? hasImagePath
-      // ? newRoom.image
-      ? newRoom.imageName
-      // : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
-      : newRoom.imageName
+    ? newRoom.image
+    // ? hasImagePath
+    //   // ? newRoom.image
+    //   ? newRoom.imageName
+    //   // : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
+    //   : newRoom.imageName
     : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
 
-  return { hasImagePath, imagePath }
+  // return { hasImagePath, imagePath }
+  return imagePath
 }
 
 const addRoom = async function (newRoom) {
@@ -82,7 +84,8 @@ const editRoom = async function (newRoom, id) {
 exports.createEditRoom = async function ({ newRoom, id }) {
   const hasImage = !!newRoom?.image;
 
-  const { hasImagePath, imagePath } = getImage(hasImage, newRoom);
+  // const { hasImagePath, imagePath } = getImage(hasImage, newRoom);
+  const imagePath = getImage(hasImage, newRoom);
 
   let room, error;
 
