@@ -126,7 +126,7 @@ const parseFile = function(req) {
   const buffer = req?.file?.buffer;
   const fileName = req?.file?.originalname;
   const mimeType = req?.file?.mimetype;
-  console.log({buffer, fileName, mimeType});
+  console.log({req});
   let error = '';
 
   if (!buffer || !fileName || !mimeType) {
