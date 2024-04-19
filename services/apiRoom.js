@@ -21,42 +21,22 @@ exports.getRooms = async function (req) {
     .paginate();
   // EXECUTE QUERY
   const { data: rooms, error } = await features.query;
-
-  // if (error) {
-  //   console.error(error);
-  // }
-
+ 
   return { rooms, error };
 };
 
 exports.deleteRoom = async function (id) {
   const { error } = await supabase.from('rooms').delete().eq('id', id);
 
-  // if (error) {
-  //   console.error(error);
-  // }
-
   return { error };
 };
 
 const getImage = function (hasImage, newRoom) {
-  // const hasImagePath = hasImage && newRoom.image?.startsWith?.(supabaseUrl);
-
-  // const imageName = `${Math.random()}-${newRoom.image?.name}`?.replaceAll(
-  //   '/',
-  //   '',
-  // );
 
   const imagePath = hasImage
     ? newRoom.image
-    // ? hasImagePath
-    //   // ? newRoom.image
-    //   ? newRoom.imageName
-    //   // : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`
-    //   : newRoom.imageName
     : `${supabaseUrl}/storage/v1/object/public/room-images/missing_picture.jpg`;
 
-  // return { hasImagePath, imagePath }
   return imagePath
 }
 
@@ -84,7 +64,6 @@ const editRoom = async function (newRoom, id) {
 exports.createEditRoom = async function ({ newRoom, id }) {
   const hasImage = !!newRoom?.image;
 
-  // const { hasImagePath, imagePath } = getImage(hasImage, newRoom);
   const imagePath = getImage(hasImage, newRoom);
 
   let room, error;
@@ -107,19 +86,7 @@ exports.createEditRoom = async function ({ newRoom, id }) {
     console.error(error);
   }
 
-  // if (hasImagePath)
-    return { data: { room: Array.isArray(room) ? room[0] : room }, error };
-
-  // const uploadFile = req.files.file;
-  // const name = uploadFile.name;
-  // const md5 = uploadFile.md5();
-  // const saveAs = `${md5}_${name}`;
-  // uploadFile.mv(`${__dirname}/public/files/temp/${saveAs}`, function(err) {
-  //   if (err) {
-  //     return res.status(500).send(err);
-  //   }
-  // }); 
-
+  return { data: { room: Array.isArray(room) ? room[0] : room }, error };
 };
 
 const parseFile = function(req) {

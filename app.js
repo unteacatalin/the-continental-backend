@@ -14,6 +14,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const roomRouter = require('./routes/roomRoutes');
 const userRouter = require('./routes/userRoutes');
 const settingRouter = require('./routes/settingRoutes');
+const guestRouter = require('./routes/guestRoutes');
 
 const app = express();
 
@@ -120,6 +121,7 @@ app.use(compression());
 app.use('/api/v1/rooms', roomRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/settings', settingRouter);
+app.use('/api/v1/guests', guestRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

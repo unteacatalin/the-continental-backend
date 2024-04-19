@@ -1,8 +1,9 @@
-import supabase from './supabase';
+const supabase = require('../utils/supabase');
+const APIFeatures = require('../utils/apiFeatures');
 
-import { PAGE_SIZE } from '../utils/constants';
+const { PAGE_SIZE } = require('../utils/constants');
 
-export async function getGuestsRowCount({ filter }) {
+exports.getGuestsRowCount = async function ({ filter }) {
   let queryCount = supabase.from('guests').select('id', {
     count: 'exact',
     head: true,
@@ -18,17 +19,18 @@ export async function getGuestsRowCount({ filter }) {
     }
   }
 
-  const { error, count: countRows } = await queryCount;
+  let error = '';
+  const { error: getGuestsRowCountError, count: countRows } = await queryCount;
 
-  if (error) {
-    console.error(error);
-    throw new Error('Guests count could not be loaded');
+  if (getGuestsRowCountError) {
+    console.error(getGuestsRowCountError);
+    error = 'Guests count could not be loaded';
   }
 
-  return { countRows };
+  return { countRows, error };
 }
 
-export async function getGuests({ filter, sortBy, page }) {
+exports.getGuests = async function ({ filter, sortBy, page }) {
   let query = supabase.from('guests').select('*', { count: 'exact' });
 
   // FILTER
@@ -56,17 +58,18 @@ export async function getGuests({ filter, sortBy, page }) {
     query = query.range(from, to);
   }
 
-  const { data, error, count } = await query;
+  let error = '';
+  const { data, error: getGuestsError, count } = await query;
 
-  if (error) {
-    console.error(error);
-    throw new Error('Guests could not be loaded');
+  if (getGuestsError) {
+    console.error(getGuestsError);
+    error = 'Guests could not be loaded';
   }
 
-  return { data, count };
+  return { data, count, error };
 }
 
-export async function createEditGuest(newGuest, countryFlag, nationality, id) {
+exports.createEditGuest = async function (newGuest, countryFlag, nationality, id) {
   // 1. Create/edit guest
   let query = supabase.from('guests');
 
@@ -80,23 +83,25 @@ export async function createEditGuest(newGuest, countryFlag, nationality, id) {
       .eq('id', id);
   }
 
-  const { data: guest, error } = await query.select();
+  let error = '';
+  const { data: guest, error: createEditGuestError } = await query.select();
 
-  if (error) {
-    console.error(error);
-    throw new Error('Guest could not be created/edited');
+  if (createEditGuestError) {
+    console.error(createEditGuestError);
+    error = 'Guest could not be created/edited';
   }
 
-  return guest;
+  return {guest, error};
 }
 
-export async function deleteGuest(id) {
-  const { error } = await supabase.from('guests').delete().eq('id', id);
+exports.deleteGuest = async function (id) {
+  let error = '';
+  const { error: deleteGuestError } = await supabase.from('guests').delete().eq('id', id);
 
-  if (error) {
-    console.error(error);
-    throw new Error('Guest data could not be deleted');
+  if (deleteGuestError) {
+    console.error(deleteGuestError);
+    error = 'Guest data could not be deleted';
   }
 
-  return {};
+  return {error};
 }
