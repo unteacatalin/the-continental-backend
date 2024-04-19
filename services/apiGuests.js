@@ -30,43 +30,53 @@ exports.getGuestsRowCount = async function ({ filter }) {
   return { countRows, error };
 }
 
-exports.getGuests = async function ({ filter, sortBy, page }) {
-  let query = supabase.from('guests').select('*', { count: 'exact' });
+exports.getGuests = async function (req) {
+// exports.getGuests = async function ({ filter, sortBy, page }) {
+  // let query = supabase.from('guests').select('*', { count: 'exact' });
 
-  // FILTER
-  if (filter) {
-    if (filter.nationalID) {
-      query = query.ilike('nationalID', `%${filter.nationalID}%`);
-    }
-    if (filter.email) {
-      query = query.ilike('email', `%${filter.email}%`);
-    }
-  }
+  // // FILTER
+  // if (filter) {
+  //   if (filter.nationalID) {
+  //     query = query.ilike('nationalID', `%${filter.nationalID}%`);
+  //   }
+  //   if (filter.email) {
+  //     query = query.ilike('email', `%${filter.email}%`);
+  //   }
+  // }
 
-  // SORT
-  if (sortBy && sortBy.field) {
-    query = query.order(sortBy.field, {
-      ascending: sortBy.direction === 'asc',
-    });
-  }
+  // // SORT
+  // if (sortBy && sortBy.field) {
+  //   query = query.order(sortBy.field, {
+  //     ascending: sortBy.direction === 'asc',
+  //   });
+  // }
 
-  // PAGINATION
-  if (page) {
-    const from = (page - 1) * PAGE_SIZE;
-    const to = page * PAGE_SIZE - 1;
+  // // PAGINATION
+  // if (page) {
+  //   const from = (page - 1) * PAGE_SIZE;
+  //   const to = page * PAGE_SIZE - 1;
 
-    query = query.range(from, to);
-  }
+  //   query = query.range(from, to);
+  // }
 
-  let error = '';
-  const { data, error: getGuestsError, count } = await query;
+  // let error = '';
+  // const { data, error: getGuestsError, count } = await query;
 
-  if (getGuestsError) {
-    console.error(getGuestsError);
-    error = 'Guests could not be loaded';
-  }
+  // if (getGuestsError) {
+  //   console.error(getGuestsError);
+  //   error = 'Guests could not be loaded';
+  // }
 
-  return { data, count, error };
+  // return { data, count, error };
+  const features = new APIFeatures(supabase.from('guests').select('*', { count: 'exact' }), req.query)
+    .limitFields()
+    .filter()
+    .sort()
+    .paginate();
+  // EXECUTE QUERY
+  const { data: guests, error } = await features.query;
+
+  return { guests, error }
 }
 
 exports.createEditGuest = async function (newGuest, countryFlag, nationality, id) {
