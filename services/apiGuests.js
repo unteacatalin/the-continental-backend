@@ -13,9 +13,7 @@ exports.getGuests = async function (req) {
   return { guests, error }
 }
 
-exports.createEditGuest = async function (newGuest) {
-  const id = newGuest?.id;
-
+exports.createEditGuest = async function ({newGuest, id}) {
   // 1. Create/edit guest
   let query = supabase.from('guests');
 
@@ -37,7 +35,7 @@ exports.createEditGuest = async function (newGuest) {
     error = 'Guest could not be created/edited';
   }
 
-  return {guest, error};
+  return {data: {guest: Array.isArray(guest) ? guest[0] : guest}, error};
 }
 
 exports.deleteGuest = async function (id) {
