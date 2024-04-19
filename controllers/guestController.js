@@ -31,7 +31,7 @@ exports.createEditGuest = catchAsync(async (req, res, next) => {
     const id = req.params.id;
     const newGuest = req.body;
 
-    const { data: guest, error } = await createEditGuestApi({...newGuest, id});
+    const { data: guest, error } = await createEditGuestApi({...newGuest, id: id ? id : undefined});
 
     if (error) {
         console.error(error);
