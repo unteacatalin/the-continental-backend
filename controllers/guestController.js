@@ -1,7 +1,8 @@
 const catchAsync = require('../utils/catchAsync');
 const {
     getGuests,
-    createEditGuest: createEditGuestApi
+    createEditGuest: createEditGuestApi,
+    deleteGuest: deleteGuestApi
 } = require('../services/apiGuests');
 
 exports.getAllGuests = catchAsync(async (req, res, next) => {
@@ -48,3 +49,35 @@ exports.createEditGuest = catchAsync(async (req, res, next) => {
         data: guest
     });
 });
+
+exports.deleteGuest = catchAsync(async function (req, res, next) {
+    const id = req.params.id;
+
+    if (!id) {
+        console.error('Missing guest id');
+
+        return res.status(400).json({
+            status: 'error',
+            data: {  },
+            error: 'Missing guest id'
+        });
+    }
+
+    const { error } = await deleteGuestApi(id);
+
+    if (error) {
+        console.error(error);
+        return res.status(400).json({
+            status: 'error',
+            data: {  },
+            error: 'Guest data could not be deleted'
+        });
+    }
+
+    // SEND RESPONSE
+    res.status(200).json({
+        status: 'success',
+        data: {  },
+        error: ''
+    });
+})
