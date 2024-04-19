@@ -1,14 +1,8 @@
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
 const {
-    getGuestsRowCount,
-    getGuests
+    getGuests,
+    createEditGuest: createEditGuestApi
 } = require('../services/apiGuests');
-
-exports.getGuestsCount = catchAsync(async (req, res, next) => {
-    // EXECUTE QUERY
-    const { countRows, error } = await getGuestsRowCount(req);
-})
 
 exports.getAllGuests = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
@@ -30,5 +24,27 @@ exports.getAllGuests = catchAsync(async (req, res, next) => {
         results: guests?.length,
         data: { guests },
         error: '',
+    });
+});
+
+exports.createEditGuest = catchAsync(async (req, res, next) => {
+    const id = req.params.id;
+    const newGuest = req.body;
+
+    const { data: guest, error } = await createEditRoomApi({...newGuest, id});
+
+    if (error) {
+        console.error(error);
+        return res.status(400).json({
+            status: 'error',
+            data: {},
+            error: 'Guest could not be created or edited'
+        });
+    }
+
+    // SEND RESPONSE
+    req.status(201).json({
+        status: 'success',
+        data: guest
     });
 });

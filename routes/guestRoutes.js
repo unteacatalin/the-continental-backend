@@ -3,7 +3,7 @@ const express = require('express');
 
 const {
     getAllGuests,
-    getGuestsCount
+    createEditGuest
 } = require('../controllers/guestController');
 const { protect } = require('../controllers/authController');
 
@@ -11,8 +11,6 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route('/').get(getAllGuests);
-
-router.route('/count').get(getGuestsCount);
+router.route('/').get(getAllGuests).post(createEditGuest);
 
 module.exports = router;
