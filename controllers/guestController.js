@@ -43,7 +43,7 @@ exports.createEditGuest = catchAsync(async (req, res, next) => {
     }
 
     // SEND RESPONSE
-    req.status(201).json({
+    res.status(201).json({
         status: 'success',
         data: guest
     });
