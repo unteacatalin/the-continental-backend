@@ -3,11 +3,11 @@ const AppError = require('../utils/appError');
 const {
     getGuestsRowCount,
     getGuests
-} = require('../services/apiGuest');
+} = require('../services/apiGuests');
 
 exports.getGuestsCount = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
-    const { countRows, error } = getGuestsRowCount(req);
+    const { countRows, error } = await getGuestsRowCount(req);
 })
 
 exports.getAllGuests = catchAsync(async (req, res, next) => {
