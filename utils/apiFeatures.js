@@ -69,8 +69,8 @@ class APIFeatures {
     console.log({queryString: this.queryString});
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;
-    const from = (page - 1) * limit ?? this.queryString.from;
-    const to = page * limit - 1 ?? this.queryString.to;
+    const from = (page - 1) * limit ?? +this.queryString.from;
+    const to = page * limit - 1 ?? +this.queryString.to;
     this.query = this.query.range(from, to);
 
     return this;
