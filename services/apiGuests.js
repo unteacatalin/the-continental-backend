@@ -11,6 +11,8 @@ exports.getGuests = async function (req) {
   // EXECUTE QUERY
   const { data: guests, error } = await features.query;
 
+  console.log({getGuestsApi: guests});
+
   return { guests, error }
 }
 
