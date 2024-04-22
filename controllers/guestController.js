@@ -2,7 +2,8 @@ const catchAsync = require('../utils/catchAsync');
 const {
     getGuests,
     createEditGuest: createEditGuestApi,
-    deleteGuest: deleteGuestApi
+    deleteGuest: deleteGuestApi,
+    getGuestsRowCount: getGuestsRowCountApi
 } = require('../services/apiGuests');
 
 exports.getAllGuests = catchAsync(async (req, res, next) => {
@@ -20,11 +21,34 @@ exports.getAllGuests = catchAsync(async (req, res, next) => {
     }
 
     // SEND RESPONSE
-    res.status(200).json({
+    return res.status(200).json({
         status: 'success',
         results: guests?.length,
         data: { guests },
         error: '',
+    });
+});
+
+exports.getGuestsCount = catchAsync(async (req, res, next) => {
+    // EXECUTE QUERY
+    const { count, error } = await getGuestsRowCountApi(req);
+
+    if (error) {
+        console.error(error);
+        // SEND RESPONSE
+        return res.status(400).json({
+            status: 'error',
+            data: {  },
+            error
+        });
+    }
+
+    console.log({count});
+    // SEND RESPONSE
+    return res.status(200).json({
+        status: 'success',
+        data: { count },
+        error: ''
     });
 });
 
@@ -44,7 +68,7 @@ exports.createEditGuest = catchAsync(async (req, res, next) => {
     }
 
     // SEND RESPONSE
-    res.status(201).json({
+    return res.status(201).json({
         status: 'success',
         data: guest
     });
@@ -75,7 +99,7 @@ exports.deleteGuest = catchAsync(async function (req, res, next) {
     }
 
     // SEND RESPONSE
-    res.status(200).json({
+    return res.status(200).json({
         status: 'success',
         data: {  },
         error: ''

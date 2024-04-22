@@ -14,6 +14,19 @@ exports.getGuests = async function (req) {
   return { guests, error }
 }
 
+exports.getGuestsRowCount = async function (req) {
+  console.log({query: req.query});  
+  let features = new APIFeatures(supabase.from('guests').select('id', {
+    count: 'exact',
+    head: true,
+  }), req.query)
+    .filter();
+
+  const { error, count: countRows } = await features.query;
+
+  return { countRows, error };
+}
+
 exports.createEditGuest = async function ({newGuest, id}) {
   // 1. Create/edit guest
   let query = supabase.from('guests');
