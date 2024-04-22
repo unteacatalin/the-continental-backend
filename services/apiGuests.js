@@ -22,9 +22,9 @@ exports.getGuestsRowCount = async function (req) {
   }), req.query)
     .filter();
 
-  const { error, count: countRows } = await features.query;
+  const { data: count, error } = await features.query;
 
-  return { countRows, error };
+  return { count, error };
 }
 
 exports.createEditGuest = async function ({newGuest, id}) {
