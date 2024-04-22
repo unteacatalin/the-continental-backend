@@ -23,7 +23,7 @@ exports.getGuestsRowCount = async function (req) {
     .limitFields()
     .filter();
 
-  const { data: count, error } = await features.query;
+  const { count, error } = await features.query;
 
   return { count, error };
 }
