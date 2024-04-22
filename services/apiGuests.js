@@ -9,9 +9,9 @@ exports.getGuests = async function (req) {
     .sort()
     .paginate();
   // EXECUTE QUERY
-  const { data: guests, error } = await features.query;
+  const { data: guests, count, error } = await features.query;
 
-  return { guests, error }
+  return { guests, count, error }
 }
 
 exports.getGuestsRowCount = async function (req) {
