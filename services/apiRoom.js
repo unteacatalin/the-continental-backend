@@ -26,7 +26,13 @@ exports.getRooms = async function (req) {
 };
 
 exports.deleteRoom = async function (id) {
-  const { error } = await supabase.from('rooms').delete().eq('id', id);
+  let error = '';
+  const { error: deleteRoomError } = await supabase.from('rooms').delete().eq('id', id);
+
+  if (deleteRoomError) {
+    console.error(deleteRoomError);
+    error = 'Room data could not be deleted';
+  }
 
   return { error };
 };

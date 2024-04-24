@@ -62,5 +62,5 @@ exports.deleteGuest = async function (id) {
     error = 'Guest data could not be deleted';
   }
 
-  return {error};
+  return { error };
 }

@@ -93,7 +93,7 @@ exports.deleteGuest = catchAsync(async function (req, res, next) {
         console.error(error);
         return res.status(400).json({
             status: 'error',
-            data: {  },
+            data: { },
             error: 'Guest data could not be deleted'
         });
     }
@@ -101,7 +101,7 @@ exports.deleteGuest = catchAsync(async function (req, res, next) {
     // SEND RESPONSE
     return res.status(200).json({
         status: 'success',
-        data: {  },
+        data: { },
         error: ''
     });
 })
