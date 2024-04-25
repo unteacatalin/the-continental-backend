@@ -9,7 +9,7 @@ class APIFeatures {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields', 'from', 'to'];
     excludedFields.forEach((el) => delete queryObj[el]);
-    console.log({queryObj});
+    console.log({queryObj: this.queryString});
     Object.keys(queryObj).forEach((el) => {
       const key = Object.keys(queryObj[el])[0];
       const value = Object.values(queryObj[el])[0];
