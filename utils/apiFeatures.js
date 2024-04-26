@@ -24,9 +24,9 @@ class APIFeatures {
       } else if (key === 'lte') {
         this.query = this.query.lte(`${el}`, value);
       } else if (key === 'ilike') {
-        this.query = this.query.ilike(`${el}`, value);
+        this.query = this.query.ilike(`${el}`, `%${value}%`);
       } else if (key === 'like') {
-        this.query = this.query.like(`${el}`, value);
+        this.query = this.query.like(`${el}`, `%${value}%`);
       }
       return this.query;
     });
