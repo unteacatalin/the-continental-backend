@@ -8,7 +8,7 @@ const {
 
 exports.getAllGuests = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
-    const { guests, count, from, to, error } = await getGuests(req);
+    const { guests, count, pageSize, from, to, error } = await getGuests(req);
 
     if(error) {
         console.error(error);
@@ -24,7 +24,7 @@ exports.getAllGuests = catchAsync(async (req, res, next) => {
     return res.status(200).json({
         status: 'success',
         results: guests?.length,
-        data: { guests, count, from, to },
+        data: { guests, count, pageSize, from, to },
         error: '',
     });
 });
