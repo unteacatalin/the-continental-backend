@@ -16,7 +16,7 @@ const getHash = ( content ) => {
 }
 
 exports.getRooms = async function (req) {
-  const features = new APIFeatures(supabase.from('rooms'), req.query, PAGE_SIZE)
+  const features = new APIFeatures(supabase.from('rooms').select('*', { count: 'exact' }), req.query, PAGE_SIZE)
     .limitFields()
     .filter()
     .sort()
