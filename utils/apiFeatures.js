@@ -77,7 +77,7 @@ class APIFeatures {
     // const to = this.queryString.to * 1 || page * limit - 1;
     this.from = (page - 1) * this.pageSize;
     this.to = page * this.pageSize - 1;
-    this.query = this.query.range(from, to);
+    this.query = this.query.range(this.from, this.to);
 
     return this;
   }
