@@ -24,7 +24,11 @@ exports.getRooms = async function (req) {
   // EXECUTE QUERY
   const { data: rooms, error } = await features.query;
  
-  return { rooms, error };
+  const maxPage = Math.round(count / PAGE_SIZE * 1);
+  const fromPageCheck = count === 0 ? 0 : features.from > count ? (maxPage - 1) * PAGE_SIZE < count ? (maxPage - 1) * PAGE_SIZE : count : features.from;
+  const toPageCheck = count === 0 ? 0 : features.to > count ? count : features.to;
+
+  return { rooms, count, pageSize: PAGE_SIZE, from: fromPageCheck, to: toPageCheck, error };
 };
 
 exports.deleteRoom = async function (id) {

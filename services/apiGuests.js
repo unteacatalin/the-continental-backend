@@ -12,7 +12,11 @@ exports.getGuests = async function (req) {
   // EXECUTE QUERY
   const { data: guests, count, error } = await features.query;
 
-  return { guests, count, pageSize: PAGE_SIZE, from: features.from, to: features.to, error }
+  const maxPage = Math.round(count / PAGE_SIZE * 1);
+  const fromPageCheck = count === 0 ? 0 : features.from > count ? (maxPage - 1) * PAGE_SIZE < count ? (maxPage - 1) * PAGE_SIZE : count : features.from;
+  const toPageCheck = count === 0 ? 0 : features.to > count ? count : features.to;
+
+  return { guests, count, pageSize: PAGE_SIZE, from: fromPageCheck, to: toPageCheck, error }
 }
 
 exports.getGuestsRowCount = async function (req) {
