@@ -1,5 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+// const AppError = require('../utils/appError');
 const {
   getRooms,
   deleteRoom: deleteRoomApi,
@@ -25,7 +25,7 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
   // }
 
   // EXECUTE QUERY
-  const { rooms, error } = await getRooms(req);
+  const { rooms, count, pageSize, from, to, error } = await getRooms(req);
 
   if (error) {
     console.error(error);
@@ -42,7 +42,7 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: rooms?.length,
-    data: { rooms },
+    data: { rooms, count, pageSize, from, to },
     error: '',
   });
 });
