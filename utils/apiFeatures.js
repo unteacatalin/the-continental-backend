@@ -3,12 +3,14 @@ class APIFeatures {
     this.query = query;
     this.queryString = queryString;
     this.pageSize = pageSize;
+    this.from = 0;
+    this.to = 0;
   }
 
   filter() {
     // 1) Filter
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields', 'from', 'to'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
     console.log({queryObj: this.queryString});
     Object.keys(queryObj).forEach((el) => {
@@ -73,8 +75,8 @@ class APIFeatures {
     // const limit = this.queryString.limit * 1 || 100;
     // const from = this.queryString.from * 1 || (page - 1) * limit;
     // const to = this.queryString.to * 1 || page * limit - 1;
-    const from = (page - 1) * this.pageSize;
-    const to = page * this.pageSize - 1;
+    this.from = (page - 1) * this.pageSize;
+    this.to = page * this.pageSize - 1;
     this.query = this.query.range(from, to);
 
     return this;

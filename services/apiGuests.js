@@ -12,7 +12,7 @@ exports.getGuests = async function (req) {
   // EXECUTE QUERY
   const { data: guests, count, error } = await features.query;
 
-  return { guests, count, error }
+  return { guests, count, pageSize: PAGE_SIZE, from: features.from, to: features.to, error }
 }
 
 exports.getGuestsRowCount = async function (req) {
