@@ -8,29 +8,12 @@ const {
 } = require('../services/apiRoom');
 
 exports.getAllRooms = catchAsync(async (req, res, next) => {
-  // To allow for nested GET Reviews on tour (hack)
-  let filter = {};
-  // if (req.params.tourid) {
-  //   filter = { tour: req.params.tourid };
-  // }
-
-  // if (req.error) {
-  //   console.error(req.error);
-  //   // SEND RESPONSE
-  //   return res.status(401).json({
-  //     status: 'error',
-  //     data: { },
-  //     error: req.error,
-  //   });  
-  // }
-
   // EXECUTE QUERY
   const { rooms, count, pageSize, from, to, error } = await getRooms(req);
 
   if (error) {
     console.error(error);
-    // return next(new AppError('Rooms data could not be loaded', 400));
-      // SEND RESPONSE
+    // SEND RESPONSE
     return res.status(400).json({
       status: 'error',
       data: { },
