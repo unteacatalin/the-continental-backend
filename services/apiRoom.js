@@ -22,7 +22,7 @@ exports.getRooms = async function (req) {
     .sort()
     .paginate();
   // EXECUTE QUERY
-  const { data: rooms, error } = await features.query;
+  const { data: rooms, count, error } = await features.query;
  
   const maxPage = Math.round(count / PAGE_SIZE * 1);
   const fromPageCheck = count === 0 ? 0 : features.from > count ? (maxPage - 1) * PAGE_SIZE < count ? (maxPage - 1) * PAGE_SIZE : count : features.from;
