@@ -4,6 +4,8 @@ const APIFeatures = require('../utils/apiFeatures');
 const crypto = require('crypto');
 const path = require('path');
 
+const { PAGE_SIZE: pageSize } = require('../utils/constants');
+
 const getHash = ( content ) => {				
   var hash = crypto.createHash('md5');
   //passing the data to be hashed
@@ -14,7 +16,7 @@ const getHash = ( content ) => {
 }
 
 exports.getRooms = async function (req) {
-  const features = new APIFeatures(supabase.from('rooms'), req.query)
+  const features = new APIFeatures(supabase.from('rooms'), req.query, pageSize)
     .limitFields()
     .filter()
     .sort()

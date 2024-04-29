@@ -1,13 +1,14 @@
 const supabase = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
+const { PAGE_SIZE: pageSize } = require('../utils/constants');
 
 exports.getGuests = async function (req) {
   console.log({query: req.query});
-  const features = new APIFeatures(supabase.from('guests').select('*', { count: 'exact' }), req.query)
+  const features = new APIFeatures(supabase.from('guests').select('*', { count: 'exact' }), req.query, pageSize)
     .limitFields()
-    .filter();
-    // .sort()
-    // .paginate();
+    .filter()
+    .sort()
+    .paginate();
   // EXECUTE QUERY
   const { data: guests, count, error } = await features.query;
 
