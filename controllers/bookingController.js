@@ -3,7 +3,7 @@ const {
     getBookings
 } = require('../services/apiBooking');
 
-exports.getAllRooms = catchAsync(async (req, res, next) => {
+exports.getAllBookings = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
     const { bookings, count, pageSize, from, to, error } = await getBookings(req);
 
