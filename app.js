@@ -15,6 +15,7 @@ const roomRouter = require('./routes/roomRoutes');
 const userRouter = require('./routes/userRoutes');
 const settingRouter = require('./routes/settingRoutes');
 const guestRouter = require('./routes/guestRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 
 const app = express();
 
@@ -71,13 +72,6 @@ app.use(
   }),
 );
 
-// app.use(busboy({
-//   highWaterMark: 1 * 1024 * 1024,
-//   limits: {
-//     fileSize: 2 * 1024 * 1024,
-//   }  
-// }));
-
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -107,21 +101,12 @@ app.use(xss());
 
 app.use(compression());
 
-  // fileUpload({
-  //   limits: { fileSize: 2 * 1024 * 1024 },
-  //   abortOnLimit: true,
-  //   // useTempFiles: true,
-  //   // safeFileNames: true,
-  //   // preserveExtension: true,
-  //   // tempFileDir: `${__dirname}/public/files/temp`
-  // })
-// );
-
 // ROUTES
 app.use('/api/v1/rooms', roomRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/settings', settingRouter);
 app.use('/api/v1/guests', guestRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

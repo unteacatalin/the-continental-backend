@@ -1,5 +1,4 @@
 const catchAsync = require('../utils/catchAsync');
-// const AppError = require('../utils/appError');
 const {
   getRooms,
   deleteRoom: deleteRoomApi,
@@ -30,24 +29,6 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.getImageInfo = function (req, res, next) {
-//     const { hasImage, newRoom } = req.body;
-
-//     let error;
-
-//     if (!hasImage || !newRoom) {
-//       error = 'Missing info in request!';
-//     }
-
-//     // EXECUTE QUERY
-//     const { hasImagePage, imageName, imagePath } = getImage(hasImage, newRoom);
-  
-//     // SEND RESPONSE
-//     res.status(200).json({
-//       data: {hasImagePage, imageName, imagePath}, error
-//     });
-// };
-
 exports.deleteRoom = catchAsync(async (req, res, next) => {
   const id = req.params.id;
 
@@ -59,14 +40,12 @@ exports.deleteRoom = catchAsync(async (req, res, next) => {
       data: { },
       error: 'Missing room id'
     }); 
-    // return next(new AppError('Missing room id', 400));
   }
 
   const { error } = await deleteRoomApi(id);
 
   if (error) {
     console.error(error);
-    // return next(new AppError('Room data could not be deleted'));
     return res.status(400).json({
       status: 'error',
       data: { },
@@ -92,7 +71,6 @@ exports.createEditRoom = catchAsync(async (req, res, next) => {
 
   if (error) {
     console.error(error);
-    // return next(new AppError('Room could not be created or edited'));
     return res.status(400).json({
       status: 'error',
       data: { },
@@ -108,7 +86,6 @@ exports.createEditRoom = catchAsync(async (req, res, next) => {
 });
 
 exports.uploadRoomImage = catchAsync(async (req, res, next) => {
-
   const { data, error } = await uploadImageApi(req);
 
   if (error) {
