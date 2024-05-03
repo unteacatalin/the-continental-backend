@@ -1,7 +1,9 @@
 const express = require('express');
 
 const {
-  getAllBookings,
+  getBookings,
+  createEditBooking,
+  deleteBooking
 } = require('../controllers/bookingController');
 const { protect } = require('../controllers/authController');
 
@@ -9,10 +11,8 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route('/').get(getAllBookings)
-// .post(createEditRoom);
+router.route('/').get(getBookings).post(createEditBooking);
 
-// router.route('/:id').patch(createEditRoom).delete(deleteRoom);
-//   .post(protect, restrictTo('admin', 'lead-guide'), createTour);
+router.route('/:id').patch(createEditBooking).delete(deleteBooking);
 
 module.exports = router;

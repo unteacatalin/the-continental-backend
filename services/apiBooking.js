@@ -1,22 +1,7 @@
 const supabase = require('../utils/supabase');
-const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
 
-const {PAGE_SIZE} = require('../utils/constants')
-
-exports.getBookingRowCount = async function (req) {
-    console.log({query: req.query});
-    let features = new APIFeatures(supabase.from('bookings').select('id', {
-        count: 'ecact',
-        head: true
-    }), req.query)
-        .limitFields()
-        .filter();
-    
-    const { count, error } = await features.query;
-
-    return { count, error };
-}
+const {PAGE_SIZE} = require('../utils/constants');
 
 exports.getBookings = async function (req) {
     console.log({ query: req.query });
@@ -34,3 +19,41 @@ exports.getBookings = async function (req) {
   
     return { bookings, count, pageSize: PAGE_SIZE, from: fromPageCheck, to: toPageCheck, error }
 }
+
+exports.createEditBooking = async function ({newBooking, id}) {
+    // 1. Create/edit guest
+    let query = supabase.from('bookings');
+  
+    if (!id) {
+      // A) CREATE
+      query = query.insert([newBooking]);
+    } else {
+      // B) EDIT
+      query = query
+        .update(newBooking)
+        .eq('id', id);
+    }
+  
+    let error = '';
+    const { data: booking, error: createEdiBookingError } = await query.select();
+  
+    if (createEditBookingError) {
+      console.error(createEditBookingError);
+      error = 'Booking could not be created/edited';
+    }
+  
+    return {data: {booking: Array.isArray(booking) ? booking[0] : booking}, error};
+  }
+
+  exports.deleteBooking = async function (id) {
+    let error = '';
+    const { error: deleteBookingError } = await supabase.from('bookings').delete().eq('id', id);
+  
+    if (deleteBookingError) {
+      console.error(deleteBookingError);
+      error = 'Booking data could not be deleted';
+    }
+  
+    return { error };
+  }
+  
