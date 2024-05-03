@@ -1,8 +1,9 @@
 class APIFeatures {
-  constructor(query, queryString, pageSize) {
+  constructor(query, queryString, pageSize, queryPattern) {
     this.query = query;
     this.queryString = queryString;
     this.pageSize = pageSize;
+    this.queryPattern = queryPattern;
     this.from = 0;
     this.to = 0;
   }
@@ -62,6 +63,8 @@ class APIFeatures {
     const fields = this.queryString.fields;
     if (fields) {
       this.query = this.query.select(fields);
+    } else if (this.queryPattern) {
+      this.query = this.query.select(this.queryPattern);
     } else {
       this.query = this.query.select('*');
     }

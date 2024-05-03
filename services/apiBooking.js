@@ -5,7 +5,7 @@ const {PAGE_SIZE} = require('../utils/constants');
 
 exports.getBookings = async function (req) {
     console.log({ query: req.query });
-    let features = new APIFeatures(supabase.from('bookings').select('*, rooms(name, id), guests(fullName, email, nationalID, id)', { count: 'exact' }), req.query, PAGE_SIZE)
+    let features = new APIFeatures(supabase.from('bookings').select('*, rooms(name, id), guests(fullName, email, nationalID, id)', { count: 'exact' }), req.query, PAGE_SIZE, '*, rooms(name, id), guests(fullName, email, nationalID, id)')
         .limitFields()
         .filter()
         .sort()
