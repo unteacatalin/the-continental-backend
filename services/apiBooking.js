@@ -35,7 +35,7 @@ exports.createEditBooking = async function ({newBooking, id}) {
     }
   
     let error = '';
-    const { data: booking, error: createEdiBookingError } = await query.select();
+    const { data: booking, error: createEditBookingError } = await query.select();
   
     if (createEditBookingError) {
       console.error(createEditBookingError);
