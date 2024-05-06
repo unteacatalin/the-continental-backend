@@ -20,6 +20,29 @@ exports.getBookings = async function (req) {
     return { bookings, count, pageSize: PAGE_SIZE, from: fromPageCheck, to: toPageCheck, error }
 }
 
+exports.getBooking = async function (req) {
+  let features = new APIFeatures(supabase
+        .from('bookings')
+        .select('*, rooms(*), guests(*)')
+        .eq('id', id)
+        .single(), req.query, PAGE_SIZE, '*, rooms(*), guests(*)')
+        .limitFields()
+        .filter()
+        .sort()
+        .paginate();
+
+  const { data: booking, error: selectError } = await features.query;
+  
+  let error = '';
+  
+  if (selectError) {
+      console.error(selectError);
+      error = 'Unable to retrieve data!';
+  }
+      
+  return { booking, error }
+}
+
 exports.createEditBooking = async function ({newBooking, id}) {
     // 1. Create/edit guest
     let query = supabase.from('bookings');

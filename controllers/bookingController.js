@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const {
     getBookings: getBookingsApi,
+    getBooking: getBookingApi,
     createEditBooking: createEditBookingApi,
     deleteBooking: deleteBookingApi
 } = require('../services/apiBooking');
@@ -24,6 +25,29 @@ exports.getBookings = catchAsync(async (req, res, next) => {
       status: 'success',
       results: bookings?.length,
       data: { bookings, count, pageSize, from, to },
+      error: '',
+    });
+});
+
+exports.getBooking = catchAsync(async (req, res, next) => {
+    // EXECUTE QUERY
+    const { booking, error } = await getBookingApi(req);
+
+    if (error) {
+      console.error(error);
+      // SEND RESPONSE
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error,
+      });  
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      results: booking?.length,
+      data: { booking },
       error: '',
     });
 });
