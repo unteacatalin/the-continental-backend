@@ -22,7 +22,7 @@ exports.getBookings = async function (req) {
 
 exports.getBooking = async function (req) {
   const id = req.params.id;
-  
+
   let features = new APIFeatures(supabase
         .from('bookings')
         .select('*, rooms(*), guests(*)')
@@ -39,7 +39,7 @@ exports.getBooking = async function (req) {
   
   if (selectError) {
       console.error(selectError);
-      error = 'Unable to retrieve data!';
+      error = 'Booking not found!';
   }
       
   return { booking, error }
