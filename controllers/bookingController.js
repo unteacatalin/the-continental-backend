@@ -58,6 +58,8 @@ exports.createEditBooking = catchAsync(async (req, res, next) => {
 
     const { data: booking, error } = await createEditBookingApi({newBooking, id});
 
+    console.log({ createEditBooking: booking, id });
+
     if (error) {
         console.error(error);
         return res.status(400).json({
