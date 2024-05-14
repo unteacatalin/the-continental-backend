@@ -3,7 +3,8 @@ const {
     getBookings: getBookingsApi,
     getBooking: getBookingApi,
     createEditBooking: createEditBookingApi,
-    deleteBooking: deleteBookingApi
+    deleteBooking: deleteBookingApi,
+    getBookingsAfterDate: getBookingsAfterDateApi
 } = require('../services/apiBooking');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
@@ -106,4 +107,27 @@ exports.deleteBooking = catchAsync(async function (req, res, next) {
         data: { },
         error: ''
     });
-})
+});
+
+exports.getBookingsAfterDate = catchAsync(async (req, res, next) => {
+    // EXECUTE QUERY
+    const { bookings, error } = await getBookingsAfterDateApi(req);
+
+    if (error) {
+      console.error(error);
+      // SEND RESPONSE
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error,
+      });  
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      results: bookings?.length,
+      data: { bookings },
+      error: '',
+    });
+});
