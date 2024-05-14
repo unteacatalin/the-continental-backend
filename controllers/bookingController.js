@@ -55,10 +55,10 @@ exports.getBooking = catchAsync(async (req, res, next) => {
 exports.createEditBooking = catchAsync(async (req, res, next) => {
     const id = req.params.id;
     const newBooking = req.body;
+    console.log({ createEditBooking: newBooking, id });
 
     const { data: booking, error } = await createEditBookingApi({newBooking, id});
 
-    console.log({ createEditBooking: booking, id });
 
     if (error) {
         console.error(error);

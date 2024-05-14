@@ -30,7 +30,7 @@ exports.getGuestsRowCount = async function (req) {
 
   const { count, error } = await features.query;
 
-  return { count, error };
+  return { count, pageSize: PAGE_SIZE, error };
 }
 
 exports.createEditGuest = async function ({newGuest, id}) {
