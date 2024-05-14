@@ -31,7 +31,7 @@ exports.getAllGuests = catchAsync(async (req, res, next) => {
 
 exports.getGuestsCount = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
-    const { count, error } = await getGuestsRowCountApi(req);
+    const { count, pageSize, error } = await getGuestsRowCountApi(req);
 
     if (error) {
         console.error(error);
@@ -47,7 +47,7 @@ exports.getGuestsCount = catchAsync(async (req, res, next) => {
     // SEND RESPONSE
     return res.status(200).json({
         status: 'success',
-        data: { count },
+        data: { count, pageSize },
         error: ''
     });
 });
