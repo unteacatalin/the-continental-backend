@@ -14,7 +14,7 @@ const router = express.Router();
 router.use(protect);
 
 router.route('/').get(getBookings).post(createEditBooking);
-router.get('/after-date', getBookingsAfterDate);
+router.get('/after-date/:date', getBookingsAfterDate);
 
 router.route('/:id').get(getBooking).patch(createEditBooking).delete(deleteBooking);
 

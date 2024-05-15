@@ -110,8 +110,9 @@ exports.deleteBooking = catchAsync(async function (req, res, next) {
 });
 
 exports.getBookingsAfterDate = catchAsync(async (req, res, next) => {
+    const date = req.params.date;
     // EXECUTE QUERY
-    const { bookings, error } = await getBookingsAfterDateApi(req);
+    const { bookings, error } = await getBookingsAfterDateApi(date);
 
     if (error) {
       console.error(error);
