@@ -1,11 +1,11 @@
 const { formatDistance, parseISO } = require('date-fns');
-const { differenceInDays } = require('date-fns/esm');
+// const { differenceInDays } = require('date-fns/esm');
 
 // We want to make this function work for both Date objects and strings (which come from Supabase)
-export const subtractDates = (dateStr1, dateStr2) =>
-  differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)));
+// exports.subtractDates = (dateStr1, dateStr2) =>
+//   differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)));
 
-export const formatDistanceFromNow = (dateStr) =>
+exports.formatDistanceFromNow = (dateStr) =>
   formatDistance(parseISO(dateStr), new Date(), {
     addSuffix: true,
   })
@@ -24,12 +24,12 @@ exports.getToday = function (options = {}) {
   return today.toISOString();
 };
 
-export const formatCurrency = (value) =>
+exports.formatCurrency = (value) =>
   new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(
     value
   );
 
-export const compareRef = (o1, o2) => {
+exports.compareRef = (o1, o2) => {
   if (o1 && o2) {
     o1 = o1.current ?? o1;
     o2 = o2.current ?? o2;
@@ -38,7 +38,7 @@ export const compareRef = (o1, o2) => {
   return o1 === o2;
 };
 
-export const stringify = (e) => {
+exports.stringify = (e) => {
   if (e) {
     e = e.current ?? e;
     return String(e.tagName).toLowerCase() + '#' + e.id + '.' + e.className;
