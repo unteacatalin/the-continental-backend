@@ -102,4 +102,20 @@ exports.getBookingsAfterDate = async function (date) {
   return { bookings, error };
 }
 
-  
+// Returns all STAYS that are were created after the given date
+exports.getStaysAfterDate = async function (date) {
+  const { data: bookings, error: errorGettingBookings } = await supabase
+    .from('bookings')
+    .select('*, guests(fullName)')
+    .gte('startDate', date)
+    .lte('startDate', getToday());
+
+  let error = '';
+
+  if (errorGettingBookings) {
+    console.error(errorGettingBookings);
+    error = 'Bookings could not get loaded';
+  }
+
+  return { bookings, error };
+}

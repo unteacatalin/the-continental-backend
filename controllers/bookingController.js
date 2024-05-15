@@ -4,7 +4,8 @@ const {
     getBooking: getBookingApi,
     createEditBooking: createEditBookingApi,
     deleteBooking: deleteBookingApi,
-    getBookingsAfterDate: getBookingsAfterDateApi
+    getBookingsAfterDate: getBookingsAfterDateApi,
+    getStaysAfterDate: getStaysAfterDateApi
 } = require('../services/apiBooking');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
@@ -113,6 +114,30 @@ exports.getBookingsAfterDate = catchAsync(async (req, res, next) => {
     const date = req.params.date;
     // EXECUTE QUERY
     const { bookings, error } = await getBookingsAfterDateApi(date);
+
+    if (error) {
+      console.error(error);
+      // SEND RESPONSE
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error,
+      });  
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      results: bookings?.length,
+      data: { bookings },
+      error: '',
+    });
+});
+
+exports.getStaysAfterDate = catchAsync(async (req, res, next) => {
+    const date = req.params.date;
+    // EXECUTE QUERY
+    const { bookings, error } = await getStaysAfterDateApi(date);
 
     if (error) {
       console.error(error);
