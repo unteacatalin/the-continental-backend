@@ -1,5 +1,6 @@
 const supabase = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
+const {getToday} = require('../utils/helpers');
 
 const {PAGE_SIZE} = require('../utils/constants');
 
@@ -82,7 +83,7 @@ exports.createEditBooking = async function ({newBooking, id}) {
     return { error };
   }
 
-  // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
+// Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
 // date: ISOString
 exports.getBookingsAfterDate = async function (date) {
   const { data: bookings, error: errorGettingBookings } = await supabase
