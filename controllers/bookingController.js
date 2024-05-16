@@ -163,6 +163,7 @@ exports.getBookedRoomsInInterval = catchAsync(async (req, res, next) => {
     const startDate = req.params.startDate;
     const endDate = req.params.endDate;
     const bookingId = req.params.bookingId;
+    console.log({startDate, endDate, bookingId});
 
     // EXECUTE QUERY
     const { rooms, error } = await getBookedRoomsInIntervalApi(startDate, endDate, bookingId);
