@@ -119,3 +119,31 @@ exports.getStaysAfterDate = async function (date) {
 
   return { bookings, error };
 }
+
+// Available rooms between start date and end date
+exports.getBookedRoomsInInterval = async function (startDate, endDate, bookingId) {
+  let query = supabase.from('bookings').select('roomId');
+  if (bookingId) {
+    query = query.or(
+      `and(startDate.lte.${startDate},endDate.gte.${startDate},id.neq.${bookingId}),and(startDate.lte.${endDate},endDate.gte.${endDate},id.neq.${bookingId})`
+    );
+  } else {
+    query = query.or(
+      `and(startDate.lte.${startDate},endDate.gte.${startDate}),and(startDate.lte.${endDate},endDate.gte.${endDate})`
+    );
+  }
+  const { data: rooms, error: errorBookedRoomsInInterval } = await query;
+
+  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
+  // (stay.statDate >= startDate && stay.startDate <= startDate) ||
+  // (stay.endDate >= endDate && stay.endDate <= endDate)
+
+  let error = '';
+
+  if (errorBookedRoomsInInterval) {
+    console.error(errorBookedRoomsInInterval);
+    error = 'Bookings could not get loaded';
+  }
+
+  return { rooms, error };
+}

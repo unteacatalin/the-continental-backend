@@ -6,7 +6,8 @@ const {
   createEditBooking,
   deleteBooking,
   getBookingsAfterDate,
-  getStaysAfterDate
+  getStaysAfterDate,
+  getBookedRoomsInInterval
 } = require('../controllers/bookingController');
 const { protect } = require('../controllers/authController');
 
@@ -17,6 +18,7 @@ router.use(protect);
 router.route('/').get(getBookings).post(createEditBooking);
 router.get('/after-date/:date', getBookingsAfterDate);
 router.get('/stays-after-date/:date', getStaysAfterDate);
+router.get('/booked-rooms-in-interval', getBookedRoomsInInterval);
 
 router.route('/:id').get(getBooking).patch(createEditBooking).delete(deleteBooking);
 
