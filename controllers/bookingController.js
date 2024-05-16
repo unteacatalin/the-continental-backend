@@ -160,9 +160,10 @@ exports.getStaysAfterDate = catchAsync(async (req, res, next) => {
 });
 
 exports.getBookedRoomsInInterval = catchAsync(async (req, res, next) => {
-    const startDate = req.params.startDate;
-    const endDate = req.params.endDate;
-    const bookingId = req.params.bookingId;
+    const query = req.query;
+    const startDate = query?.startDate;
+    const endDate = query?.endDate;
+    const bookingId = query?.bookingId;
     console.log({startDate, endDate, bookingId});
 
     // EXECUTE QUERY
