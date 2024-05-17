@@ -150,11 +150,12 @@ exports.getBookedRoomsInInterval = async function (startDate, endDate, bookingId
 
 // Activity means that there is a check in or a check out today
 exports.getStaysTodayActivity = async function () {
+  const td = getToday();
   const { data: stays, error: errorGettingTodayStays } = await supabase
     .from('bookings')
     .select('id, numNights, status, guests(fullName, nationality, countryFlag)')
     .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+      `and(status.eq.unconfirmed,startDate.eq.${td}),and(status.eq.checked-in,endDate.eq.${td})`
     )
     .order('created_at');
 
@@ -169,7 +170,7 @@ exports.getStaysTodayActivity = async function () {
     error = "Today's activity could not be filtered";
   }
 
-  console.log({ getStaysTodayActivityAPI: stays });
+  console.log({ getStaysTodayActivityAPI: stays, today: td });
 
   return { stays, error };
 }
