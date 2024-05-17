@@ -6,7 +6,8 @@ const {
     deleteBooking: deleteBookingApi,
     getBookingsAfterDate: getBookingsAfterDateApi,
     getStaysAfterDate: getStaysAfterDateApi,
-    getBookedRoomsInInterval: getBookedRoomsInIntervalApi
+    getBookedRoomsInInterval: getBookedRoomsInIntervalApi,
+    getStaysTodayActivity: getStaysTodayActivityApi
 } = require('../services/apiBooking');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
@@ -164,7 +165,6 @@ exports.getBookedRoomsInInterval = catchAsync(async (req, res, next) => {
     const startDate = query?.startDate;
     const endDate = query?.endDate;
     const bookingId = query?.bookingId;
-    console.log({startDate, endDate, bookingId});
 
     // EXECUTE QUERY
     const { rooms, error } = await getBookedRoomsInIntervalApi(startDate, endDate, bookingId);
@@ -184,6 +184,29 @@ exports.getBookedRoomsInInterval = catchAsync(async (req, res, next) => {
       status: 'success',
       results: rooms?.length,
       data: { rooms },
+      error: '',
+    });
+});
+
+exports.getStaysTodayActivity = catchAsync(async (req, res, next) => {
+    // EXECUTE QUERY
+    const { stays, error } = await getStaysTodayActivityApi();
+
+    if (error) {
+      console.error(error);
+      // SEND RESPONSE
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error,
+      });  
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      results: stays?.length,
+      data: { stays },
       error: '',
     });
 });

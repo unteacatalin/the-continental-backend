@@ -147,3 +147,26 @@ exports.getBookedRoomsInInterval = async function (startDate, endDate, bookingId
 
   return { rooms, error };
 }
+
+// Activity means that there is a check in or a check out today
+exports.getStaysTodayActivity = async function () {
+  const { data: stays, errorGettingTodayStays } = await supabase
+    .from('bookings')
+    .select('id, numNights, status, guests(fullName, nationality, countryFlag)')
+    .or(
+      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+    )
+    .order('created_at');
+
+  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
+  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
+  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
+
+  let error = '';
+
+  if (errorGettingTodayStays) {
+    console.error(errorGettingTodayStays);
+    error = 'Bookings could not get loaded';
+  }
+  return { stays, error };
+}
