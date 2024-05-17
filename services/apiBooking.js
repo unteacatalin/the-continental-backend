@@ -168,5 +168,8 @@ exports.getStaysTodayActivity = async function () {
     console.error(errorGettingTodayStays);
     error = 'Bookings could not get loaded';
   }
+
+  console.log({ getStaysTodayActivityAPI: stays });
+
   return { stays, error };
 }
