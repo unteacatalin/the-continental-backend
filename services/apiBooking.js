@@ -150,7 +150,7 @@ exports.getBookedRoomsInInterval = async function (startDate, endDate, bookingId
 
 // Activity means that there is a check in or a check out today
 exports.getStaysTodayActivity = async function () {
-  const { data: stays, errorGettingTodayStays } = await supabase
+  const { data: stays, error: errorGettingTodayStays } = await supabase
     .from('bookings')
     .select('id, numNights, status, guests(fullName, nationality, countryFlag)')
     .or(
@@ -166,7 +166,7 @@ exports.getStaysTodayActivity = async function () {
 
   if (errorGettingTodayStays) {
     console.error(errorGettingTodayStays);
-    error = 'Bookings could not get loaded';
+    error = "Today's activity could not be filtered";
   }
 
   console.log({ getStaysTodayActivityAPI: stays });
