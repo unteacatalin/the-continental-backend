@@ -20,6 +20,10 @@ exports.getToday = function (options = {}) {
   if (options?.end)
     // Set to the last second of the day
     today.setUTCHours(23, 59, 59, 999);
+  else if (options?.checkin)
+    today.setUTCHours(15, 0, 0, 0);
+  else if (options?.checkout)
+    today.setUTCHours(12, 0, 0, 0);
   else today.setUTCHours(0, 0, 0, 0);
   return today.toISOString();
 };
