@@ -176,3 +176,16 @@ exports.getStaysTodayActivity = async function () {
 
   return { stays, error };
 }
+
+exports.deleteBooking = async function (id) {
+  let error = '';
+  // REMEMBER RLS POLICIES
+  const { error: errorDeletingBooking } = await supabase.from('bookings').delete().eq('id', id);
+
+  if (errorDeletingBooking) {
+    console.error(errorDeletingBooking);
+    error = 'Booking could not be deleted';
+  }
+
+  return { error};
+}

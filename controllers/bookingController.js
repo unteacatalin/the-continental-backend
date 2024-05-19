@@ -7,7 +7,7 @@ const {
     getBookingsAfterDate: getBookingsAfterDateApi,
     getStaysAfterDate: getStaysAfterDateApi,
     getBookedRoomsInInterval: getBookedRoomsInIntervalApi,
-    getStaysTodayActivity: getStaysTodayActivityApi
+    getStaysTodayActivity: getStaysTodayActivityApi,
 } = require('../services/apiBooking');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
@@ -210,3 +210,39 @@ exports.getStaysTodayActivity = catchAsync(async (req, res, next) => {
       error: '',
     });
 });
+
+exports.deleteBooking = catchAsync(async (req, res, next) => {
+    const id = req.params.id;
+    let error = '';
+  
+    if (!id) {
+      error = 'Missing booking id'
+      console.error(error);
+  
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error
+      }); 
+    }
+  
+    const { error: errorDeletingBooking } = await deleteBookingApi(id);
+  
+    if (errorDeletingBooking) {
+      console.error(errorDeletingBooking);
+      error = 'Booking data could not be deleted';
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error
+      }); 
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      data: { },
+      error
+    });
+  });
+  
