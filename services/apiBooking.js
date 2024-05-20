@@ -47,41 +47,41 @@ exports.getBooking = async function (req) {
 }
 
 exports.createEditBooking = async function ({newBooking, id}) {
-    // 1. Create/edit guest
-    let query = supabase.from('bookings');
-  
-    if (!id) {
-      // A) CREATE
-      query = query.insert([newBooking]);
-    } else {
-      // B) EDIT
-      query = query
-        .update(newBooking)
-        .eq('id', id);
-    }
-  
-    let error = '';
-    const { data: booking, error: createEditBookingError } = await query.select();
-  
-    if (createEditBookingError) {
-      console.error(createEditBookingError);
-      error = 'Booking could not be created/edited';
-    }
-  
-    return {data: {booking: Array.isArray(booking) ? booking[0] : booking}, error};
+  // 1. Create/edit guest
+  let query = supabase.from('bookings');
+
+  if (!id) {
+    // A) CREATE
+    query = query.insert([newBooking]);
+  } else {
+    // B) EDIT
+    query = query
+      .update(newBooking)
+      .eq('id', id);
   }
 
-  exports.deleteBooking = async function (id) {
-    let error = '';
-    const { error: deleteBookingError } = await supabase.from('bookings').delete().eq('id', id);
-  
-    if (deleteBookingError) {
-      console.error(deleteBookingError);
-      error = 'Booking data could not be deleted';
-    }
-  
-    return { error };
+  let error = '';
+  const { data: booking, error: createEditBookingError } = await query.select();
+
+  if (createEditBookingError) {
+    console.error(createEditBookingError);
+    error = 'Booking could not be created/edited';
   }
+
+  return {data: {booking: Array.isArray(booking) ? booking[0] : booking}, error};
+}
+
+exports.deleteBooking = async function (id) {
+  let error = '';
+  const { error: deleteBookingError } = await supabase.from('bookings').delete().eq('id', id);
+
+  if (deleteBookingError) {
+    console.error(deleteBookingError);
+    error = 'Booking data could not be deleted';
+  }
+
+  return { error };
+}
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
 // date: ISOString
@@ -188,4 +188,26 @@ exports.deleteBooking = async function (id) {
   }
 
   return { error};
+}
+
+exports.deleteAllBookings = async function () {
+  const { error } = await supabase.from('bookings').delete().gt('id', 0);
+  if (error) console.log(error.message);
+  return { error }
+}
+
+exports.initBookings = async function (newBookings) {
+  let error = '';
+
+  const { data: bookings, error: errorInitBooking } = await supabase
+    .from('bookings')
+    .insert(newBookings)
+    .select();
+
+  if (errorInitBooking) {
+    console.error(errorInitBooking);
+    error = 'Bookings could not be uploaded';
+  }
+
+  return {data: bookings, error};
 }

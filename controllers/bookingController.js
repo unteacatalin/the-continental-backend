@@ -8,7 +8,13 @@ const {
     getStaysAfterDate: getStaysAfterDateApi,
     getBookedRoomsInInterval: getBookedRoomsInIntervalApi,
     getStaysTodayActivity: getStaysTodayActivityApi,
+    deleteAllBookings: deleteAllBookingsApi,
+    initBookings: initBookingsApi
 } = require('../services/apiBooking');
+
+const { initBookings } = require('../data/data-bookings');
+const { initRooms } = require('../data/data-rooms');
+const { initGuests } = require('../data/data-guests');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
@@ -244,5 +250,46 @@ exports.deleteBooking = catchAsync(async (req, res, next) => {
       data: { },
       error
     });
-  });
+});
   
+exports.deleteAllBookings = catchAsync(async (req, res, next) => {
+    let error = '';
+    
+    const { error: errorDeletingAllBookings } = await deleteAllBookingsApi();
+  
+    if (errorDeletingAllBookings) {
+      console.error(errorDeletingAllBookings);
+      error = 'All booking data could not be deleted';
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error
+      }); 
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      data: { },
+      error
+    });
+});
+
+exports.initBookings = catchAsync(async (req, res, next) => {
+    const { data: bookings, error } = await initBookingApi(initBookings);
+
+    if (error) {
+        console.error(error);
+        return res.status(400).json({
+            status: 'error',
+            data: {},
+            error: 'Bookings could not be uploaded'
+        });
+    }
+
+    // SEND RESPONSE
+    return res.status(201).json({
+        status: 'success',
+        data: bookings
+    });
+});
