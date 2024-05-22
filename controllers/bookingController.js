@@ -13,6 +13,7 @@ const {
 } = require('../services/apiBooking');
 
 const { inBookings } = require('../data/data-bookings');
+const { inRooms } = require('../data/data-rooms');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
@@ -253,7 +254,7 @@ exports.deleteBooking = catchAsync(async (req, res, next) => {
 exports.deleteAllBookings = catchAsync(async (req, res, next) => {
     let error = '';
     
-    const { error: errorDeletingAllBookings } = await deleteAllBookingsApi();
+    const { error: errorDeletingAllBookings } = await deleteAllBookingsApi(inBookings);
   
     if (errorDeletingAllBookings) {
       console.error(errorDeletingAllBookings);
@@ -274,7 +275,7 @@ exports.deleteAllBookings = catchAsync(async (req, res, next) => {
 });
 
 exports.initBookings = catchAsync(async (req, res, next) => {
-    const { data: bookings, error } = await initBookingApi(initBookings);
+    const { data: bookings, error } = await initBookingApi(initBookings, inRooms);
 
     if (error) {
         console.error(error);

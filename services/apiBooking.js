@@ -198,7 +198,7 @@ exports.deleteAllBookings = async function () {
   return { error }
 }
 
-exports.initBookings = async function (newBookings, newRooms, newGuests) {
+exports.initBookings = async function (inBookings, inRooms) {
   let error = '';
 
   // Bookings need a guestId and a roomId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and roomIds, and then replace the original IDs in the booking data with the actual ones from the DB
@@ -213,9 +213,9 @@ exports.initBookings = async function (newBookings, newRooms, newGuests) {
     .order('id');
   const allRoomIds = roomsIds.map((room) => room.id);
 
-  const finalBookings = newBookings.map((booking) => {
+  const finalBookings = inBookings.map((booking) => {
     // Here relying on the order of rooms, as they don't have and ID yet
-    const room = newRooms.at(booking.roomId - 1);
+    const room = inRooms.at(booking.roomId - 1);
     const numNights = subtractDates(booking.endDate, booking.startDate);
     const roomPrice = numNights * (room.regularPrice - room.discount);
     const extrasPrice = booking.hasBreakfast

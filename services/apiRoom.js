@@ -156,12 +156,12 @@ exports.deleteAllRooms = async function () {
   return { error }
 }
 
-exports.initRooms = async function (newRooms) {
+exports.initRooms = async function (inRooms) {
   let error = '';
 
   const { data: rooms, error: errorInitRooms } = await supabase
     .from('rooms')
-    .insert(newRooms)
+    .insert(inRooms)
     .select();
 
   if (errorInitRooms) {

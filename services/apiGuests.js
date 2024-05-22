@@ -76,12 +76,12 @@ exports.deleteAllGuests = async function () {
   return { error }
 }
 
-exports.initGuests = async function (newGuests) {
+exports.initGuests = async function (inGuests) {
   let error = '';
 
   const { data: guests, error: errorInitGuests } = await supabase
     .from('guests')
-    .insert(newGuests)
+    .insert(inGuests)
     .select();
 
   if (errorInitGuests) {
