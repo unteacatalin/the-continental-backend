@@ -1,4 +1,4 @@
-import { isFuture, isPast, isToday } from 'date-fns';
+const { isFuture, isPast, isToday } = require('date-fns');
 
 const supabase = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
