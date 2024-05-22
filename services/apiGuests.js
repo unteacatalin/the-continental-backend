@@ -69,3 +69,25 @@ exports.deleteGuest = async function (id) {
 
   return { error };
 }
+
+exports.deleteAllGuests = async function () {
+  const { error } = await supabase.from('guests').delete().gt('id', 0);
+  if (error) console.log(error.message);
+  return { error }
+}
+
+exports.initGuests = async function (newGuests) {
+  let error = '';
+
+  const { data: guests, error: errorInitGuests } = await supabase
+    .from('guests')
+    .insert(newGuests)
+    .select();
+
+  if (errorInitGuests) {
+    console.error(errorInitGuests);
+    error = 'Guests could not be uploaded';
+  }
+
+  return {data: guests, error};
+}

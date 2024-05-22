@@ -12,9 +12,7 @@ const {
     initBookings: initBookingsApi
 } = require('../services/apiBooking');
 
-const { initBookings } = require('../data/data-bookings');
-const { initRooms } = require('../data/data-rooms');
-const { initGuests } = require('../data/data-guests');
+const { inBookings } = require('../data/data-bookings');
 
 exports.getBookings = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY

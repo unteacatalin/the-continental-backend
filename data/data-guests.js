@@ -1,6 +1,6 @@
 // Search for: 'jo', 'fa', 'mar', 'emm', 'ah'
 
-exports.guests = [
+exports.inGuests = [
     {
       // id: 1000,
       fullName: 'Jonas Schmedtmann',

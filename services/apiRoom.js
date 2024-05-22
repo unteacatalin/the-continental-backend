@@ -149,3 +149,25 @@ exports.uploadImage = async function(req) {
   // 4. Return image url from supabase storage
   return { data: {imageName: `${supabaseUrl}/storage/v1/object/public/room-images/${newFileName}`}, error }
 }
+
+exports.deleteAllRooms = async function () {
+  const { error } = await supabase.from('rooms').delete().gt('id', 0);
+  if (error) console.log(error.message);
+  return { error }
+}
+
+exports.initRooms = async function (newRooms) {
+  let error = '';
+
+  const { data: rooms, error: errorInitRooms } = await supabase
+    .from('rooms')
+    .insert(newRooms)
+    .select();
+
+  if (errorInitRooms) {
+    console.error(errorInitRooms);
+    error = 'Rooms could not be uploaded';
+  }
+
+  return {data: rooms, error};
+}

@@ -3,8 +3,11 @@ const {
   getRooms,
   deleteRoom: deleteRoomApi,
   createEditRoom: createEditRoomApi,
-  uploadImage: uploadImageApi
+  uploadImage: uploadImageApi,
+  deleteAllRooms: deleteAllRooms
 } = require('../services/apiRoom');
+
+const { inRooms } = require('../data/data-rooms');
 
 exports.getAllRooms = catchAsync(async (req, res, next) => {
   // EXECUTE QUERY
@@ -112,5 +115,47 @@ exports.uploadRoomImage = catchAsync(async (req, res, next) => {
     status: 'success',
     data: { imageName },
     error: ''
+  });
+});
+
+exports.deleteAllRooms = catchAsync(async (req, res, next) => {
+  let error = '';
+  
+  const { error: errorDeletingAllRooms } = await deleteAllRoomsApi();
+
+  if (errorDeletingAllRooms) {
+    console.error(errorDeletingAllRooms);
+    error = 'All rooms data could not be deleted';
+    return res.status(400).json({
+      status: 'error',
+      data: { },
+      error
+    }); 
+  }
+
+  // SEND RESPONSE
+  res.status(200).json({
+    status: 'success',
+    data: { },
+    error
+  });
+});
+
+exports.initRooms = catchAsync(async (req, res, next) => {
+  const { data: rooms, error } = await initRoomsApi(inRooms);
+
+  if (error) {
+      console.error(error);
+      return res.status(400).json({
+          status: 'error',
+          data: {},
+          error: 'Rooms could not be uploaded'
+      });
+  }
+
+  // SEND RESPONSE
+  return res.status(201).json({
+      status: 'success',
+      data: rooms
   });
 });

@@ -11,7 +11,7 @@ function fromToday(numDays, todo = 'start') {
   return newDate;
 }
 
-exports.initBookings = [
+exports.inBookings = [
   // room 001
   {
     created_at: fromToday(-20, 'notime'),

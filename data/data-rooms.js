@@ -2,7 +2,7 @@ const { supabaseUrl } = require('../utils/supabase');
 
 const imageUrl = `${supabaseUrl}/storage/v1/object/public/room-images/`;
 
-exports.rooms = [
+exports.inRooms = [
   {
     name: '001',
     maxCapacity: 2,

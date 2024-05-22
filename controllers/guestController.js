@@ -3,8 +3,12 @@ const {
     getGuests,
     createEditGuest: createEditGuestApi,
     deleteGuest: deleteGuestApi,
-    getGuestsRowCount: getGuestsRowCountApi
+    getGuestsRowCount: getGuestsRowCountApi,
+    deleteAllGuests: deleteAllGuestsApi,
+    initGuests: initGuestsApi
 } = require('../services/apiGuests');
+
+const { inGuests } = require('../data/data-guests');
 
 exports.getAllGuests = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
@@ -105,3 +109,45 @@ exports.deleteGuest = catchAsync(async function (req, res, next) {
         error: ''
     });
 })
+
+exports.deleteAllGuests = catchAsync(async (req, res, next) => {
+    let error = '';
+    
+    const { error: errorDeletingAllGuests } = await deleteAllGuestsApi();
+  
+    if (errorDeletingAllGuests) {
+      console.error(errorDeletingAllGuests);
+      error = 'All guests data could not be deleted';
+      return res.status(400).json({
+        status: 'error',
+        data: { },
+        error
+      }); 
+    }
+  
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      data: { },
+      error
+    });
+});
+
+exports.initGuests = catchAsync(async (req, res, next) => {
+    const { data: guests, error } = await initGuestsApi(inGuests);
+
+    if (error) {
+        console.error(error);
+        return res.status(400).json({
+            status: 'error',
+            data: {},
+            error: 'Guests could not be uploaded'
+        });
+    }
+
+    // SEND RESPONSE
+    return res.status(201).json({
+        status: 'success',
+        data: guests
+    });
+});

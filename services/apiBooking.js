@@ -1,6 +1,8 @@
+import { isFuture, isPast, isToday } from 'date-fns';
+
 const supabase = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
-const {getToday} = require('../utils/helpers');
+const { getToday, subtractDates } = require('../utils/helpers');
 
 const {PAGE_SIZE} = require('../utils/constants');
 
@@ -196,16 +198,71 @@ exports.deleteAllBookings = async function () {
   return { error }
 }
 
-exports.initBookings = async function (newBookings) {
+exports.initBookings = async function (newBookings, newRooms, newGuests) {
   let error = '';
 
-  const { data: bookings, error: errorInitBooking } = await supabase
+  // Bookings need a guestId and a roomId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and roomIds, and then replace the original IDs in the booking data with the actual ones from the DB
+  const { data: guestsIds } = await supabase
+    .from('guests')
+    .select('id')
+    .order('id');
+  const allGuestIds = guestsIds.map((room) => room.id);
+  const { data: roomsIds } = await supabase
+    .from('rooms')
+    .select('id')
+    .order('id');
+  const allRoomIds = roomsIds.map((room) => room.id);
+
+  const finalBookings = newBookings.map((booking) => {
+    // Here relying on the order of rooms, as they don't have and ID yet
+    const room = newRooms.at(booking.roomId - 1);
+    const numNights = subtractDates(booking.endDate, booking.startDate);
+    const roomPrice = numNights * (room.regularPrice - room.discount);
+    const extrasPrice = booking.hasBreakfast
+      ? numNights * 25 * booking.numGuests
+      : 0; // hardcoded breakfast price
+    const totalPrice = roomPrice + extrasPrice;
+
+    let status;
+    if (
+      isPast(new Date(booking.endDate)) &&
+      !isToday(new Date(booking.endDate))
+    )
+      status = 'checked-out';
+    if (
+      isFuture(new Date(booking.startDate)) ||
+      isToday(new Date(booking.startDate))
+    )
+      status = 'unconfirmed';
+    if (
+      (isFuture(new Date(booking.endDate)) ||
+        isToday(new Date(booking.endDate))) &&
+      isPast(new Date(booking.startDate)) &&
+      !isToday(new Date(booking.startDate))
+    )
+      status = 'checked-in';
+
+    return {
+      ...booking,
+      numNights,
+      roomPrice,
+      extrasPrice,
+      totalPrice,
+      guestId: allGuestIds.at(booking.guestId - 1),
+      roomId: allRoomIds.at(booking.roomId - 1),
+      status,
+    };
+  });
+
+  console.log(finalBookings);
+
+  const { data: bookings, error: errorInitBookings } = await supabase
     .from('bookings')
-    .insert(newBookings)
+    .insert(finalBookings)
     .select();
 
-  if (errorInitBooking) {
-    console.error(errorInitBooking);
+  if (errorInitBookings) {
+    console.log(errorInitBookings);
     error = 'Bookings could not be uploaded';
   }
 

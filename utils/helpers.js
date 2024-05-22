@@ -1,16 +1,4 @@
-const { formatDistance, parseISO } = require('date-fns');
-// const { differenceInDays } = require('date-fns/esm');
-
-// We want to make this function work for both Date objects and strings (which come from Supabase)
-// exports.subtractDates = (dateStr1, dateStr2) =>
-//   differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)));
-
-exports.formatDistanceFromNow = (dateStr) =>
-  formatDistance(parseISO(dateStr), new Date(), {
-    addSuffix: true,
-  })
-    .replace('about ', '')
-    .replace('in', 'In');
+const { formatDistance, parseISO, differenceInDays } = require('date-fns');
 
 // Supabase needs an ISO date string. However, that string will be different on every render because the MS or SEC have changed, which isn't good. So we use this trick to remove any time
 exports.getToday = function (options = {}) {
@@ -28,19 +16,9 @@ exports.getToday = function (options = {}) {
   return today.toISOString();
 };
 
-exports.formatCurrency = (value) =>
-  new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(
-    value
-  );
-
-exports.compareRef = (o1, o2) => {
-  if (o1 && o2) {
-    o1 = o1.current ?? o1;
-    o2 = o2.current ?? o2;
-    return stringify(o1) === stringify(o2);
-  }
-  return o1 === o2;
-};
+// We want to make this function work for both Date objects and strings (which come from Supabase)
+exports.subtractDates = (dateStr1, dateStr2) =>
+  differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)));
 
 exports.stringify = (e) => {
   if (e) {

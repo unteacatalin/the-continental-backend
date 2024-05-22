@@ -5,7 +5,9 @@ const {
   getAllRooms,
   deleteRoom,
   createEditRoom,
-  uploadRoomImage
+  uploadRoomImage,
+  deleteAllRooms,
+  initRooms
 } = require('../controllers/roomController');
 const { protect } = require('../controllers/authController');
 
@@ -16,7 +18,8 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route('/').get(getAllRooms).post(createEditRoom);
+router.route('/').get(getAllRooms).post(createEditRoom).delete(deleteAllRooms);
+router.post('/init', initRooms);
 
 router.post('/image', upload.single('image'), uploadRoomImage);
 router.route('/:id').patch(createEditRoom).delete(deleteRoom);
