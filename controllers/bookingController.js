@@ -275,7 +275,7 @@ exports.deleteAllBookings = catchAsync(async (req, res, next) => {
 });
 
 exports.initBookings = catchAsync(async (req, res, next) => {
-    const { data: bookings, error } = await initBookingApi(initBookings, inRooms);
+    const { data: bookings, error } = await initBookingsApi(initBookings, inRooms);
 
     if (error) {
         console.error(error);
