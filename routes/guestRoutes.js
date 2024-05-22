@@ -16,7 +16,7 @@ const router = express.Router();
 router.use(protect);
 
 router.route('/').get(getAllGuests).post(createEditGuest).delete(deleteAllGuests);
-router.post('/init', initGuests);
+router.get('/init', initGuests);
 
 router.route('/count').get(getGuestsCount);
 router.route('/:id').patch(createEditGuest).delete(deleteGuest);

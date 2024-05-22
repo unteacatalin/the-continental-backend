@@ -23,7 +23,7 @@ router.get('/after-date/:date', getBookingsAfterDate);
 router.get('/stays-after-date/:date', getStaysAfterDate);
 router.get('/booked-rooms-in-interval', getBookedRoomsInInterval);
 router.get('/today-activity', getStaysTodayActivity);
-router.post('/init', initBookings);
+router.get('/init', initBookings);
 
 router.route('/:id').get(getBooking).patch(createEditBooking).delete(deleteBooking);
 
