@@ -1,18 +1,18 @@
 const catchAsync = require('../utils/catchAsync');
 const {
-    getGuests,
+    getGuests: getGuestsApi,
     createEditGuest: createEditGuestApi,
     deleteGuest: deleteGuestApi,
-    getGuestsRowCount: getGuestsRowCountApi,
+    getAllGuests: getAllGuestsApi,
     deleteAllGuests: deleteAllGuestsApi,
     initGuests: initGuestsApi
 } = require('../services/apiGuests');
 
 const { inGuests } = require('../data/data-guests');
 
-exports.getAllGuests = catchAsync(async (req, res, next) => {
+exports.getGuests = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
-    const { guests, count, pageSize, from, to, error } = await getGuests(req);
+    const { guests, count, pageSize, from, to, error } = await getGuestsApi(req);
 
     if(error) {
         console.error(error);
@@ -33,9 +33,9 @@ exports.getAllGuests = catchAsync(async (req, res, next) => {
     });
 });
 
-exports.getGuestsCount = catchAsync(async (req, res, next) => {
+exports.getAllGuests = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
-    const { count, pageSize, error } = await getGuestsRowCountApi(req);
+    const { guests, count, error } = await getAllGuestsApi(req);
 
     if (error) {
         console.error(error);
@@ -47,11 +47,11 @@ exports.getGuestsCount = catchAsync(async (req, res, next) => {
         });
     }
 
-    console.log({count});
+    console.log({guests});
     // SEND RESPONSE
     return res.status(200).json({
         status: 'success',
-        data: { count, pageSize },
+        data: { guests, count, pageSize },
         error: ''
     });
 });

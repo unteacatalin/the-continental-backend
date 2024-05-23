@@ -1,11 +1,10 @@
 const express = require('express');
-// const multer = require('multer');
 
 const {
-    getAllGuests,
+    getGuests,
     createEditGuest,
     deleteGuest,
-    getGuestsCount,
+    getAllGuests,
     deleteAllGuests,
     initGuests
 } = require('../controllers/guestController');
@@ -15,10 +14,10 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route('/').get(getAllGuests).post(createEditGuest).delete(deleteAllGuests);
+router.route('/').get(getGuests).post(createEditGuest).delete(deleteAllGuests);
 router.get('/init', initGuests);
+router.get('/all', getAllGuests);
 
-router.route('/count').get(getGuestsCount);
 router.route('/:id').patch(createEditGuest).delete(deleteGuest);
 
 module.exports = router;

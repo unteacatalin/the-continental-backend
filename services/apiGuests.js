@@ -19,18 +19,16 @@ exports.getGuests = async function (req) {
   return { guests, count, pageSize: PAGE_SIZE, from: fromPageCheck, to: toPageCheck, error }
 }
 
-exports.getGuestsRowCount = async function (req) {
+exports.getAllGuests = async function (req) {
   console.log({query: req.query});  
-  let features = new APIFeatures(supabase.from('guests').select('id', {
+  let features = new APIFeatures(supabase.from('guests').select('id, fullName, email, nationalID', {
     count: 'exact',
-    head: true,
   }), req.query)
-    .limitFields()
-    .filter();
+    .sort();
 
-  const { count, error } = await features.query;
+  const { data: guests, count, error } = await features.query;
 
-  return { count, pageSize: PAGE_SIZE, error };
+  return { guests, count, error };
 }
 
 exports.createEditGuest = async function ({newGuest, id}) {
