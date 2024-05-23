@@ -51,7 +51,7 @@ exports.getAllGuests = catchAsync(async (req, res, next) => {
     // SEND RESPONSE
     return res.status(200).json({
         status: 'success',
-        data: { guests, count, pageSize },
+        data: { guests, count },
         error: ''
     });
 });
