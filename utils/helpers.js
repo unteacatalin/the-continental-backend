@@ -1,4 +1,5 @@
-const { formatDistance, parseISO, differenceInDays } = require('date-fns');
+const { parseISO, differenceInDays } = require('date-fns');
+const crypto = require('crypto');
 
 // Supabase needs an ISO date string. However, that string will be different on every render because the MS or SEC have changed, which isn't good. So we use this trick to remove any time
 exports.getToday = function (options = {}) {
@@ -27,3 +28,12 @@ exports.stringify = (e) => {
   }
   return null;
 };
+
+exports.getHash = ( content ) => {				
+  var hash = crypto.createHash('md5');
+  //passing the data to be hashed
+  data = hash.update(content, 'utf-8');
+  //Creating the hash in the required format
+  gen_hash= data.digest('hex');
+  return gen_hash;
+}

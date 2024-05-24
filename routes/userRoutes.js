@@ -1,4 +1,5 @@
 const express = require('express');
+const multer  = require('multer');
 
 const {
   signIn,
@@ -7,7 +8,11 @@ const {
   protect,
   updatePassword,
   getMe,
+  uploadAvatarImage,
 } = require('../controllers/authController');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage, limits: { fileSize: 1048576 } });
 
 const router = express.Router();
 
@@ -18,6 +23,7 @@ router.get('/signout', signOut);
 // Protect all routes after this middleware
 router.use(protect);
 
+router.post('/image', upload.single('image'), uploadAvatarImage);
 router.get('/me', getMe);
 router.patch('/updateMyPassword', updatePassword);
 

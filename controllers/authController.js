@@ -10,8 +10,8 @@ const {
   logout: signOutApi,
   signup: signUpApi,
   updateUser,
+  uploadAvatarImage: uploadAvatarImageApi
 } = require('../services/apiAuth');
-const supabase = require('../utils/supabase');
 
 const signToken = (email) =>
   jwt.sign({ email }, process.env.JWT_SECRET, {
@@ -175,25 +175,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, req, res);
 });
 
-// exports.getMe = catchAsync(async (req, res, next) => {
-//   let userData = { data: { user: {} }, error: '' };
-
-//   const user = await getCurrentUser(req);
-
-//   if (!user) {
-//     console.error('You are not logged in! Please log in to get access.');
-//     userData.error = 'You are not logged in! Please log in to get access.';
-//     return createSendToken(userData, 401, req, res);
-//     // return next(
-//     //   new AppError('You are not logged in! Please log in to get access.', 401),
-//     // );
-//   }
-
-//   userData.data.user = user;
-
-//   createSendToken(userData, 200, req, res);
-// });
-
 exports.getMe = (req, res, next) => {
   let userData = { data: { user: {} }, error: '' };
 
@@ -231,4 +212,34 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
   }
 
   createSendToken(newUser, 200, req, res);
+});
+
+exports.uploadAvatarImage = catchAsync(async (req, res, next) => {
+  const { data, error } = await uploadAvatarImageApi(req);
+
+  if (error) {
+    console.error(error);
+    return res.status(400).json({
+      status: 'error',
+      data: { },
+      error
+    });
+  }
+
+  if (!data.imageName) {
+    return res.status(400).json({
+      status: 'error',
+      data: { },
+      error: 'Missing image related data'
+    });
+  }
+
+  const imageName = data?.imageName;
+
+  // SEND RESPONSE
+  res.status(201).json({
+    status: 'success',
+    data: { imageName },
+    error: ''
+  });
 });

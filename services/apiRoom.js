@@ -1,19 +1,10 @@
+const path = require('path');
+
 const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
 const APIFeatures = require('../utils/apiFeatures');
-const crypto = require('crypto');
-const path = require('path');
-
 const { PAGE_SIZE } = require('../utils/constants');
-
-const getHash = ( content ) => {				
-  var hash = crypto.createHash('md5');
-  //passing the data to be hashed
-  data = hash.update(content, 'utf-8');
-  //Creating the hash in the required format
-  gen_hash= data.digest('hex');
-  return gen_hash;
-}
+const {getHash} = require('../utils/helpers');
 
 exports.getRooms = async function (req) {
   const features = new APIFeatures(supabase.from('rooms').select('*', { count: 'exact' }), req.query, PAGE_SIZE)
@@ -132,7 +123,7 @@ exports.uploadImage = async function(req) {
   const fileExt = path.extname(name);
   const newFileName = fileHash + fileExt;
 
-  // 2. Update image
+  // 2. Upload image
   const { data, error: storageError } = await supabase.storage
   .from('room-images')
   .upload(newFileName, imageFile, { cacheControl: '3600', upsert: true, contentType: mime });

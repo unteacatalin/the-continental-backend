@@ -1,6 +1,9 @@
+const path = require('path');
+
 const AppError = require('../utils/appError');
 const supabase = require('../utils/supabase');
 const { supabaseUrl } = require('../utils/supabase');
+const {getHash} = require('../utils/helpers');
 
 exports.signup = async function ({ fullName, email, password }) {
   const {
@@ -95,17 +98,19 @@ exports.updateUser = async function ({ password, fullName, avatar, next }) {
   if (password) updateData = { password };
   if (fullName) updateData = { data: { fullName } };
 
+  let error = '';
+
   const {
     data: { user: userFullNamePassword } = {},
     error: errorFullNamePassword,
   } = await supabase.auth.updateUser(updateData);
 
-  if (errorFullNamePassword)
-    return next(
-      new AppError('Could not update user. Plase try again later.', 500),
-    );
+  if (errorFullNamePassword) {
+    console.error(errorFullNamePassword);
+    error += 'Could not update user. Plase try again later.';
+  }
 
-  if (!avatar) return { ...userFullNamePassword };
+  if (!avatar) return { userFullNamePassword, error };
 
   // 2) Upload the avatar image
   const fileName = `avatar-${userFullNamePassword.id}-${Math.random()}`;
@@ -114,10 +119,10 @@ exports.updateUser = async function ({ password, fullName, avatar, next }) {
     .from('avatars')
     .upload(fileName, avatar);
 
-  if (storageError)
-    return next(
-      new AppError('Could not save image. Please try again later.', 500),
-    );
+  if (storageError) {
+    console.error(storageError);
+    error += 'Could not save image. Please try again later.';
+  }
 
   // 3) Update avatar in the user
   updateData = {
@@ -130,10 +135,59 @@ exports.updateUser = async function ({ password, fullName, avatar, next }) {
   const { data: { user: userAvatar } = {}, error: errorAvatar } =
     await supabase.auth.updateUser(updateData);
 
-  if (errorAvatar)
-    return next(
-      new AppError('Could not update avatar. Please try again later.', 500),
-    );
+  if (errorAvatar) {
+    console.error(errorAvatar);
+    error += 'Could not update avatar. Please try again later.';
+  }
 
-  return { ...userAvatar };
+  return { userAvatar, error };
 };
+
+const parseFile = function(req) {
+  const buffer = req?.file?.buffer;
+  const fileName = req?.file?.originalname;
+  const mimeType = req?.file?.mimetype;
+  console.log({req});
+  let error = '';
+
+  if (!buffer || !fileName || !mimeType) {
+    error = 'missing file'
+  }
+
+  return {
+    data: {imageFile: buffer, fileName, mimeType},
+    error,  
+  }
+}
+
+exports.uploadAvatarImage = async function(req) {
+  // Parse form data
+  const {data: imageData, error: parseError} = parseFile(req);
+  if (parseError) {
+    console.error(parseError);
+    return { data: {imageName: ''}, error: parseError }
+  }
+  const imageFile = imageData?.imageFile;
+  const name = imageData?.fileName;
+  const mime = imageData?.mimeType;
+  const fileHash = getHash(imageFile) ;
+  const fileExt = path.extname(name);
+  const newFileName = fileHash + fileExt;
+
+  // 2. Update image
+  const { data, error: storageError } = await supabase.storage
+  .from('avatars')
+  .upload(newFileName, imageFile, { cacheControl: '3600', upsert: true, contentType: mime });
+
+  let error = '';
+
+  // 3. Send an error if the file could not be uploaded into Supabase
+  if (storageError) {
+    error = 'Could not upload avatar image!';
+    console.error(storageError);
+    return { data: {imageName: ''}, error }
+  }
+
+  // 4. Return image url from supabase storage
+  return { data: {imageName: `${supabaseUrl}/storage/v1/object/public/avatars/${newFileName}`}, error }
+}
