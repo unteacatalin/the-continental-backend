@@ -141,7 +141,7 @@ exports.updateUser = async function ({ fullName, avatar, next }) {
   //   error += 'Could not update avatar. Please try again later.';
   // }
 
-  return { userFullNameAvatar, error };
+  return { user: userFullNameAvatar, error };
 };
 
 const parseFile = function(req) {
