@@ -210,10 +210,10 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
     newUser = req.user;
   } else {
     // 4) Update full name and avatar
-    const { user, error: errorUpdatingMyData } = await updateUser({ fullName, avatar, next });
-    console.log({user});
-    newUser = user;
-    error = errorUpdatingMyData;
+    const data = await updateUser({ fullName, avatar, next });
+    console.log({user: data});
+    newUser = data?.user;
+    error = data?.error;
   }
 
   createSendToken({newUser, error}, 200, req, res);
