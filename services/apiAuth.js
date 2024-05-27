@@ -92,55 +92,56 @@ exports.getCurrentUser = async function () {
   return {user, error: err};
 };
 
-exports.updateUser = async function ({ password, fullName, avatar, next }) {
-  // 1) Update password OR fullName
-  let updateData;
-  if (password) updateData = { password };
-  if (fullName) updateData = { data: { fullName } };
+exports.updateUser = async function ({ fullName, avatar, next }) {
+  // 1) Update fullName
+  let updateData = {};
+  if (fullName) updateData = { ...updateData, data: { fullName } };
+  if (avatar) updateData = { ...updateData, avatar }
 
   let error = '';
 
   const {
-    data: { user: userFullNamePassword } = {},
-    error: errorFullNamePassword,
+    data: { user: userFullNameAvatar } = {},
+    error: errorFullNameAvatar,
   } = await supabase.auth.updateUser(updateData);
 
-  if (errorFullNamePassword) {
-    console.error(errorFullNamePassword);
-    error += 'Could not update user. Plase try again later.';
+  if (errorFullNameAvatar) {
+    console.error(errorFullNameAvatar);
+    error = 'Could not update user. Plase try again later.';
   }
 
-  if (!avatar) return { userFullNamePassword, error };
+  // if (!avatar) return { userFullName, error };
 
-  // 2) Upload the avatar image
-  const fileName = `avatar-${userFullNamePassword.id}-${Math.random()}`;
+  // // 2) Upload the avatar image
+  // const fileName = `avatar-${userFullNamePassword.id}-${Math.random()}`;
 
-  const { error: storageError } = await supabase.storage
-    .from('avatars')
-    .upload(fileName, avatar);
+  // const { error: storageError } = await supabase.storage
+  //   .from('avatars')
+  //   .upload(fileName, avatar);
 
-  if (storageError) {
-    console.error(storageError);
-    error += 'Could not save image. Please try again later.';
-  }
+  // if (storageError) {
+  //   console.error(storageError);
+  //   error += 'Could not save image. Please try again later.';
+  // }
 
-  // 3) Update avatar in the user
-  updateData = {
-    data: {
-      avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
-    },
-  };
+  // 2) Update avatar in the user
+  // updateData = {
+  //   data: {
+  //     // avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
+  //     avatar
+  //   },
+  // };
 
   // https://mbehgukaiafkgmqfeboa.supabase.co/storage/v1/object/public/avatars/default-user.jpg?t=2023-08-31T18%3A11%3A58.521Z
-  const { data: { user: userAvatar } = {}, error: errorAvatar } =
-    await supabase.auth.updateUser(updateData);
+  // const { data: { user: userAvatar } = {}, error: errorAvatar } =
+  //   await supabase.auth.updateUser(updateData);
 
-  if (errorAvatar) {
-    console.error(errorAvatar);
-    error += 'Could not update avatar. Please try again later.';
-  }
+  // if (errorAvatar) {
+  //   console.error(errorAvatar);
+  //   error += 'Could not update avatar. Please try again later.';
+  // }
 
-  return { userAvatar, error };
+  return { userFullNameAvatar, error };
 };
 
 const parseFile = function(req) {

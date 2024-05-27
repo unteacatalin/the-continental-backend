@@ -9,6 +9,7 @@ const {
   updatePassword,
   getMe,
   uploadAvatarImage,
+  updateMyUserData,
 } = require('../controllers/authController');
 
 const storage = multer.memoryStorage();
@@ -24,7 +25,7 @@ router.get('/signout', signOut);
 router.use(protect);
 
 router.post('/image', upload.single('image'), uploadAvatarImage);
-router.get('/me', getMe);
+router.route('/me').get(getMe).patch(updateMyUserData);
 router.patch('/updateMyPassword', updatePassword);
 
 module.exports = router;

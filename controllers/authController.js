@@ -194,6 +194,7 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
   const { fullName, avatar } = req.body;
 
   let newUser;
+  let error;
 
   if (!fullName && !avatar) {
     // 2) Check if there is new data
@@ -208,10 +209,12 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
     newUser = req.user;
   } else {
     // 4) Update full name and avatar
-    newUser = await updateUser({ fullName, avatar, next });
+    const { user, error: errorUpdatingMyData } = await updateUser({ fullName, avatar, next });
+    newUser = user;
+    error = errorUpdatingMyData;
   }
 
-  createSendToken(newUser, 200, req, res);
+  createSendToken({newUser, error}, 200, req, res);
 });
 
 exports.uploadAvatarImage = catchAsync(async (req, res, next) => {
