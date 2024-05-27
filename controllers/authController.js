@@ -196,8 +196,7 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
   let newUser;
   let error;
 
-  console.log({user: req.user, body: req.body});
-
+  
   if (!fullName && !avatar) {
     // 2) Check if there is new data
     newUser = req.user;
@@ -212,6 +211,7 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
   } else {
     // 4) Update full name and avatar
     const { user, error: errorUpdatingMyData } = await updateUser({ fullName, avatar, next });
+    console.log({user});
     newUser = user;
     error = errorUpdatingMyData;
   }
