@@ -101,8 +101,7 @@ exports.updateUser = async function ({ fullName, avatar, next }) {
   let error = '';
 
   const {
-    // data: { user: userFullNameAvatar } = {},
-    data,
+    data: { user: userFullNameAvatar } = {},
     error: errorFullNameAvatar,
   } = await supabase.auth.updateUser(updateData);
 
@@ -111,9 +110,9 @@ exports.updateUser = async function ({ fullName, avatar, next }) {
     error = 'Could not update user. Plase try again later.';
   }
 
-  console.log({ updatedUser: data });
+  console.log({ updatedUser: userFullNameAvatar });
 
-  const userFullNameAvatar = data?.user;
+  // const userFullNameAvatar = data?.user;
 
   // if (!avatar) return { userFullName, error };
 
