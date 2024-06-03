@@ -95,8 +95,9 @@ exports.getCurrentUser = async function () {
 exports.updateUser = async function ({ fullName, avatar, next }) {
   // 1) Update fullName
   let updateData = {};
-  if (fullName) updateData = { ...updateData, data: { fullName } };
-  if (avatar) updateData = { ...updateData, avatar }
+  if (fullName && avatar) updateData = { ...updateData, data: { fullName, avatar } };
+  else if (fullName) updateData = { ...updateData, data: { fullName } };
+  else if (avatar) updateData = { ...updateData, data: { avatar } }
 
   let error = '';
 
