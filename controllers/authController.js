@@ -192,14 +192,14 @@ exports.getMe = (req, res, next) => {
 exports.updateMyUserData = catchAsync(async (req, res, next) => {
   // 1) Get full name and avatar
   const { fullName, avatar } = req.body;
+  let userData = { data: { user: {} }, error: '' };
 
-  let newUser;
-  let error;
+  // let newUser;
+  // let error;
 
-  
   if (!fullName && !avatar) {
     // 2) Check if there is new data
-    newUser = req.user;
+    userData.data.user = req.user;
   } else if (
     req.user &&
     req.user.user_metadata &&
@@ -207,16 +207,14 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
     req.user.user_metadata.avatar === avatar
   ) {
     // 3) Check if data is changed
-    newUser = req.user;
+    userData.data.user = req.user;
   } else {
     // 4) Update full name and avatar
-    const data = await updateUser({ fullName, avatar, next });
-    console.log({user: data});
-    newUser = data?.user;
-    error = data?.error;
+    userData = await updateUser({ fullName, avatar, next });
+    console.log({userData});
   }
 
-  createSendToken({newUser, error}, 200, req, res);
+  createSendToken(userData, 200, req, res);
 });
 
 exports.uploadAvatarImage = catchAsync(async (req, res, next) => {
