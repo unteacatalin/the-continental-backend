@@ -211,8 +211,9 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
   } else {
     // 4) Update full name and avatar
     userData = await updateUser({ fullName, avatar, next });
-    console.log({userData});
   }
+
+  console.log({userData});
 
   createSendToken(userData, 200, req, res);
 });
