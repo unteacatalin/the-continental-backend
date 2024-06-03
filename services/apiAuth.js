@@ -92,12 +92,15 @@ exports.getCurrentUser = async function () {
   return {user, error: err};
 };
 
-exports.updateUser = async function ({ fullName, avatar, next }) {
+exports.updateUser = async function ({ password, fullName, avatar, next }) {
   // 1) Update fullName
   let updateData = {};
+
   if (fullName && avatar) updateData = { ...updateData, data: { fullName, avatar } };
   else if (fullName) updateData = { ...updateData, data: { fullName } };
   else if (avatar) updateData = { ...updateData, data: { avatar } }
+
+  if (password) updateData = { ...updateData, password };
 
   let error = '';
 
@@ -112,39 +115,6 @@ exports.updateUser = async function ({ fullName, avatar, next }) {
   }
 
   console.log({ updatedUser: userFullNameAvatar });
-
-  // const userFullNameAvatar = data?.user;
-
-  // if (!avatar) return { userFullName, error };
-
-  // // 2) Upload the avatar image
-  // const fileName = `avatar-${userFullNamePassword.id}-${Math.random()}`;
-
-  // const { error: storageError } = await supabase.storage
-  //   .from('avatars')
-  //   .upload(fileName, avatar);
-
-  // if (storageError) {
-  //   console.error(storageError);
-  //   error += 'Could not save image. Please try again later.';
-  // }
-
-  // 2) Update avatar in the user
-  // updateData = {
-  //   data: {
-  //     // avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
-  //     avatar
-  //   },
-  // };
-
-  // https://mbehgukaiafkgmqfeboa.supabase.co/storage/v1/object/public/avatars/default-user.jpg?t=2023-08-31T18%3A11%3A58.521Z
-  // const { data: { user: userAvatar } = {}, error: errorAvatar } =
-  //   await supabase.auth.updateUser(updateData);
-
-  // if (errorAvatar) {
-  //   console.error(errorAvatar);
-  //   error += 'Could not update avatar. Please try again later.';
-  // }
 
   return { data: {user: userFullNameAvatar}, error };
 };
