@@ -146,7 +146,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (currentUserError) req.error = currentUserError;
 
-  if (decode.email !== currentUser.email) {
+  if (decode?.email !== currentUser?.email) {
     console.error('Token belongs to different user');
     req.error = 'Token belongs to different user';
     // return next(new AppError('Token belongs to different user'));
