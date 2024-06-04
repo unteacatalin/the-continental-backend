@@ -162,17 +162,27 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   const { email } = req.user;
 
-  // 2) Check if user && current password are correct
-  const userData = await signInApi({ email, password: currentPassword, next });
+  let userData = { data: { user: {} }, error: '' };
 
-  if (!userData || !userData.user) {
-    return next(new AppError('Incorrect email or password', 401));
+  if (!currentPassword || !newPassword) {
+    console.error('Please provide valid current and new password!');
+    userData.error = 'Please provide valid current and new password!';
+    return createSendToken(userData, 400, req, res);
+  }
+
+  // 2) Check if user && current password are correct
+  userData = await signInApi({ email, password: currentPassword, next });
+
+  if (!userData || !userData.data || !userData.data.user) {
+    console.error('Incorrect email or password');
+    userData.error = 'Incorrect email or password';
+    return createSendToken(userData, 401, req, res);
   }
 
   // 3) Change the password
-  const newUser = await updateUser({ password: newPassword, next });
+  userData = await updateUser({ password: newPassword, next });
 
-  createSendToken(newUser, 201, req, res);
+  createSendToken(userData, 201, req, res);
 });
 
 exports.getMe = (req, res, next) => {
