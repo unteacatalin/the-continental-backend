@@ -24,7 +24,7 @@ router.get('/signout', signOut);
 // Protect all routes after this middleware
 router.use(protect);
 
-router.post('/image', upload.single('image'), uploadAvatarImage);
+router.post('/image', upload.single('avatar'), uploadAvatarImage);
 router.route('/me').get(getMe).patch(updateMyUserData);
 router.patch('/updateMyPassword', updatePassword);
 
