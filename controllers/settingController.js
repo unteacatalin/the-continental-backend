@@ -51,6 +51,8 @@ exports.updateSettings = catchAsync(async (req, res, next) => {
         }); 
       }
     
+      console.log({ settings });
+
       // SEND RESPONSE
       res.status(201).json({
         status: 'success',
