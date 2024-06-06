@@ -15,11 +15,14 @@ exports.updateSetting = async function (newSettings) {
         .from("settings")
         .update(newSettings)
         .eq("id", 1)
-        .single();
+        .single()
+        .select();
 
     if (error) {
         console.error(error);
     }
+
+    console.log({ updateSetting: settings });
 
     return { data: { settings }, error }
 }
