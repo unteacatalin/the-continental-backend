@@ -38,5 +38,22 @@ exports.getSettings = catchAsync(async (req, res, next) => {
 })
 
 exports.updateSettings = catchAsync(async (req, res, next) => {
+    const newSettings = req.body;
 
+    const { data: settings, error } = await updateSetting(newSettings);
+
+    if (error) {
+        console.error(error);
+        return res.status(400).json({
+          status: 'error',
+          data: { },
+          error: 'Settings could not be updated'
+        }); 
+      }
+    
+      // SEND RESPONSE
+      res.status(201).json({
+        status: 'success',
+        data: settings,
+      });    
 })

@@ -11,7 +11,11 @@ exports.getSetting = async function () {
 }
 
 exports.updateSetting = async function (newSettings) {
-    const { data: settings, error } = await supabase.from("settings").update(newSettings).eq("id", 1).single();
+    const { data: settings, error } = await supabase
+        .from("settings")
+        .update(newSettings)
+        .eq("id", 1)
+        .single();
 
     if (error) {
         console.error(error);
