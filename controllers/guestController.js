@@ -144,8 +144,6 @@ exports.initGuests = catchAsync(async (req, res, next) => {
         });
     }
 
-    console.log({ initGuestsController: guests });
-
     // SEND RESPONSE
     return res.status(201).json({
         status: 'success',

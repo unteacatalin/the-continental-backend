@@ -85,7 +85,5 @@ exports.initGuests = async function (inGuests) {
     error = 'Guests could not be uploaded';
   }
 
-  console.log({initGuestsAPI: guests});
-
   return {data: guests, error};
 }
