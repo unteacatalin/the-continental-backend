@@ -114,8 +114,6 @@ exports.updateUser = async function ({ password, fullName, avatar, next }) {
     error = 'Could not update user. Plase try again later.';
   }
 
-  console.log({ updatedUser: userFullNameAvatar });
-
   return { data: {user: userFullNameAvatar}, error };
 };
 
@@ -123,7 +121,6 @@ const parseFile = function(req) {
   const buffer = req?.file?.buffer;
   const fileName = req?.file?.originalname;
   const mimeType = req?.file?.mimetype;
-  console.log({req});
   let error = '';
 
   if (!buffer || !fileName || !mimeType) {

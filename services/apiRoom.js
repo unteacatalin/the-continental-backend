@@ -96,7 +96,6 @@ const parseFile = function(req) {
   const buffer = req?.file?.buffer;
   const fileName = req?.file?.originalname;
   const mimeType = req?.file?.mimetype;
-  console.log({req});
   let error = '';
 
   if (!buffer || !fileName || !mimeType) {
@@ -143,7 +142,7 @@ exports.uploadImage = async function(req) {
 
 exports.deleteAllRooms = async function () {
   const { error } = await supabase.from('rooms').delete().gt('id', 0);
-  if (error) console.log(error.message);
+  if (error) console.error(error.message);
   return { error }
 }
 

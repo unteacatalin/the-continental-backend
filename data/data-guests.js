@@ -44,8 +44,6 @@ exports.inGuests = [
       nationalID: '633678543',
       countryFlag: 'https://flagcdn.com/us.svg',
     },
-  
-    // GPT
     {
       fullName: 'Emma Watson',
       email: 'emma@gmail.com',

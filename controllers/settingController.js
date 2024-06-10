@@ -17,8 +17,6 @@ exports.getSettings = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
     const { data, error } = await getSetting();
 
-    console.log({data});
-
     if (error) {
         console.error(error);
 
@@ -51,8 +49,6 @@ exports.updateSettings = catchAsync(async (req, res, next) => {
         }); 
       }
     
-      console.log({ settings });
-
       // SEND RESPONSE
       res.status(201).json({
         status: 'success',

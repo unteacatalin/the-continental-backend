@@ -22,7 +22,5 @@ exports.updateSetting = async function (newSettings) {
         console.error(error);
     }
 
-    console.log({ updateSetting: settings });
-
     return { data: { settings }, error }
 }

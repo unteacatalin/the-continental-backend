@@ -3,7 +3,6 @@ const APIFeatures = require('../utils/apiFeatures');
 const { PAGE_SIZE } = require('../utils/constants');
 
 exports.getGuests = async function (req) {
-  console.log({query: req.query});
   const features = new APIFeatures(supabase.from('guests').select('*', { count: 'exact' }), req.query, PAGE_SIZE)
     .limitFields()
     .filter()
@@ -20,7 +19,6 @@ exports.getGuests = async function (req) {
 }
 
 exports.getAllGuests = async function (req) {
-  console.log({query: req.query});  
   let features = new APIFeatures(supabase.from('guests').select('id, fullName, email, nationalID', {
     count: 'exact',
   }), req.query)
@@ -70,7 +68,7 @@ exports.deleteGuest = async function (id) {
 
 exports.deleteAllGuests = async function () {
   const { error } = await supabase.from('guests').delete().gt('id', 0);
-  if (error) console.log(error.message);
+  if (error) console.error(error.message);
   return { error }
 }
 
@@ -86,6 +84,8 @@ exports.initGuests = async function (inGuests) {
     console.error(errorInitGuests);
     error = 'Guests could not be uploaded';
   }
+
+  console.log({initGuestsAPI: guests});
 
   return {data: guests, error};
 }

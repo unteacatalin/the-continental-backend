@@ -7,7 +7,6 @@ const { getToday, subtractDates } = require('../utils/helpers');
 const {PAGE_SIZE} = require('../utils/constants');
 
 exports.getBookings = async function (req) {
-    console.log({ query: req.query });
     let features = new APIFeatures(supabase.from('bookings').select('*, rooms(name, id), guests(fullName, email, nationalID, id)', { count: 'exact' }), req.query, PAGE_SIZE, '*, rooms(name, id), guests(fullName, email, nationalID, id)')
         .limitFields()
         .filter()
@@ -174,8 +173,6 @@ exports.getStaysTodayActivity = async function () {
     error = "Today's activity could not be filtered";
   }
 
-  console.log({ getStaysTodayActivityAPI: stays, todayCheckin, todayCheckout });
-
   return { stays, error };
 }
 
@@ -194,7 +191,7 @@ exports.deleteBooking = async function (id) {
 
 exports.deleteAllBookings = async function () {
   const { error } = await supabase.from('bookings').delete().gt('id', 0);
-  if (error) console.log(error.message);
+  if (error) console.error(error.message);
   return { error }
 }
 
@@ -254,15 +251,13 @@ exports.initBookings = async function (inBookings, inRooms) {
     };
   });
 
-  console.log(finalBookings);
-
   const { data: bookings, error: errorInitBookings } = await supabase
     .from('bookings')
     .insert(finalBookings)
     .select();
 
   if (errorInitBookings) {
-    console.log(errorInitBookings);
+    console.error(errorInitBookings);
     error = 'Bookings could not be uploaded';
   }
 

@@ -223,8 +223,6 @@ exports.updateMyUserData = catchAsync(async (req, res, next) => {
     userData = await updateUser({ fullName, avatar, next });
   }
 
-  console.log({userData: userData?.user?.user_metadata});
-
   createSendToken(userData, 200, req, res);
 });
 
