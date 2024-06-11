@@ -4,7 +4,8 @@ const {
   deleteRoom: deleteRoomApi,
   createEditRoom: createEditRoomApi,
   uploadImage: uploadImageApi,
-  deleteAllRooms: deleteAllRoomsApi
+  deleteAllRooms: deleteAllRoomsApi,
+  initRooms: initRoomsApi
 } = require('../services/apiRoom');
 
 const { inRooms } = require('../data/data-rooms');
