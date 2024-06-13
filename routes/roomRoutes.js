@@ -2,12 +2,13 @@ const express = require('express');
 const multer  = require('multer');
 
 const {
-  getAllRooms,
+  getRooms,
   deleteRoom,
   createEditRoom,
   uploadRoomImage,
   deleteAllRooms,
-  initRooms
+  initRooms,
+  getAllRooms
 } = require('../controllers/roomController');
 const { protect } = require('../controllers/authController');
 
@@ -18,8 +19,9 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route('/').get(getAllRooms).post(createEditRoom).delete(deleteAllRooms);
+router.route('/').get(getRooms).post(createEditRoom).delete(deleteAllRooms);
 router.get('/init', initRooms);
+router.get('/all', getAllRooms);
 
 router.post('/image', upload.single('image'), uploadRoomImage);
 router.route('/:id').patch(createEditRoom).delete(deleteRoom);

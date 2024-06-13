@@ -22,6 +22,17 @@ exports.getRooms = async function (req) {
   return { rooms, count, pageSize: PAGE_SIZE, from: fromPageCheck, to: toPageCheck, error };
 };
 
+exports.getAllRooms = async function (req) {
+  let features = new APIFeatures(supabase.from('rooms').select('id, name, maxCapacity', {
+    count: 'exact',
+  }), req.query)
+    .sort();
+
+  const { data: rooms, count, error } = await features.query;
+
+  return { rooms, count, error };
+}
+
 exports.deleteRoom = async function (id) {
   let error = '';
   const { error: deleteRoomError } = await supabase.from('rooms').delete().eq('id', id);

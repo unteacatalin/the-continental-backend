@@ -1,18 +1,19 @@
 const catchAsync = require('../utils/catchAsync');
 const {
-  getRooms,
+  getRooms: getRoomsApi,
   deleteRoom: deleteRoomApi,
   createEditRoom: createEditRoomApi,
   uploadImage: uploadImageApi,
   deleteAllRooms: deleteAllRoomsApi,
-  initRooms: initRoomsApi
+  initRooms: initRoomsApi,
+  getAllRooms: getAllRoomsApi
 } = require('../services/apiRoom');
 
 const { inRooms } = require('../data/data-rooms');
 
-exports.getAllRooms = catchAsync(async (req, res, next) => {
+exports.getRooms = catchAsync(async (req, res, next) => {
   // EXECUTE QUERY
-  const { rooms, count, pageSize, from, to, error } = await getRooms(req);
+  const { rooms, count, pageSize, from, to, error } = await getRoomsApi(req);
 
   if (error) {
     console.error(error);
@@ -30,6 +31,28 @@ exports.getAllRooms = catchAsync(async (req, res, next) => {
     results: rooms?.length,
     data: { rooms, count, pageSize, from, to },
     error: '',
+  });
+});
+
+exports.getAllRooms = catchAsync(async (req, res, next) => {
+  // EXECUTE QUERY
+  const { rooms, count, error } = await getAllRoomsApi(req);
+
+  if (error) {
+      console.error(error);
+      // SEND RESPONSE
+      return res.status(400).json({
+          status: 'error',
+          data: {  },
+          error
+      });
+  }
+
+  // SEND RESPONSE
+  return res.status(200).json({
+      status: 'success',
+      data: { rooms, count },
+      error: ''
   });
 });
 
